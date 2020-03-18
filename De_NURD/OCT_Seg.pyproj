@@ -5,7 +5,8 @@
     <ProjectGuid>07b9d663-4bc8-4016-8977-35b22d05cc4c</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>Correct_sequence_iteration.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -23,62 +24,72 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="analy.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="analy_visdom.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="correct_sequence.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="cost_matrix.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Dataset_augmentor.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Dataset_generator.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DeepPathsearch\analy.py" />
-    <Compile Include="DeepPathsearch\analy_visdom.py" />
-    <Compile Include="DeepPathsearch\arg_parse.py" />
-    <Compile Include="DeepPathsearch\arithmetic.py" />
-    <Compile Include="DeepPathsearch\classifier_svm.py" />
-    <Compile Include="DeepPathsearch\dataset.py" />
-    <Compile Include="DeepPathsearch\extract_imagenet.py" />
-    <Compile Include="DeepPathsearch\gan_body.py" />
-    <Compile Include="DeepPathsearch\get_samples.py" />
-    <Compile Include="DeepPathsearch\imagenet.py" />
-    <Compile Include="DeepPathsearch\image_trans.py" />
-    <Compile Include="DeepPathsearch\main.py" />
-    <Compile Include="DeepPathsearch\PathNetbody.py" />
-    <Compile Include="DeepPathsearch\path_train.py" />
-    <Compile Include="DeepPathsearch\testDataReading.py" />
-    <Compile Include="DeepPathsearch\test_Deep_finding.py" />
-    <Compile Include="De_NURD.py" />
-    <Compile Include="Correct_sequence_iteration.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="display.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="median_filter_special.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="path_finding.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Segmentation\analy.py" />
+    <Compile Include="Segmentation\analy_visdom.py" />
+    <Compile Include="Segmentation\correct_sequence.py" />
+    <Compile Include="Segmentation\Correct_sequence_iteration.py" />
+    <Compile Include="Segmentation\cost_matrix.py" />
+    <Compile Include="Segmentation\Dataset_augmentor.py" />
+    <Compile Include="Segmentation\Dataset_generator.py" />
+    <Compile Include="Segmentation\DeepPathsearch\analy.py" />
+    <Compile Include="Segmentation\DeepPathsearch\analy_visdom.py" />
+    <Compile Include="Segmentation\DeepPathsearch\arg_parse.py" />
+    <Compile Include="Segmentation\DeepPathsearch\arithmetic.py" />
+    <Compile Include="Segmentation\DeepPathsearch\classifier_svm.py" />
+    <Compile Include="Segmentation\DeepPathsearch\dataset.py" />
+    <Compile Include="Segmentation\DeepPathsearch\extract_imagenet.py" />
+    <Compile Include="Segmentation\DeepPathsearch\gan_body.py" />
+    <Compile Include="Segmentation\DeepPathsearch\get_samples.py" />
+    <Compile Include="Segmentation\DeepPathsearch\imagenet.py" />
+    <Compile Include="Segmentation\DeepPathsearch\image_trans.py" />
+    <Compile Include="Segmentation\DeepPathsearch\main.py" />
+    <Compile Include="Segmentation\DeepPathsearch\PathNetbody.py" />
+    <Compile Include="Segmentation\DeepPathsearch\path_train.py" />
+    <Compile Include="Segmentation\DeepPathsearch\testDataReading.py" />
+    <Compile Include="Segmentation\DeepPathsearch\test_Deep_finding.py" />
+    <Compile Include="Segmentation\De_NURD.py" />
+    <Compile Include="Segmentation\display.py" />
+    <Compile Include="Segmentation\median_filter_special.py" />
+    <Compile Include="Segmentation\path_finding.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda36-64" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DeepPathsearch\" />
+    <Folder Include="Segmentation\" />
+    <Folder Include="Segmentation\.vscode\" />
+    <Folder Include="Segmentation\DeepPathsearch\" />
+    <Folder Include="Segmentation\DeepPathsearch\__pycache__\" />
+    <Folder Include="Segmentation\__pycache__\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DeepPathsearch\README.md" />
+    <Content Include="Segmentation\.vscode\launch.json" />
+    <Content Include="Segmentation\analy.m" />
+    <Content Include="Segmentation\analy_3d_sequence.m" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\arg_parse.cpython-36.pyc" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\arg_parse.cpython-37.pyc" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\dataset.cpython-36.pyc" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\dataset.cpython-37.pyc" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\gan_body.cpython-36.pyc" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\gan_body.cpython-37.pyc" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\image_trans.cpython-36.pyc" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\image_trans.cpython-37.pyc" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\PathNetbody.cpython-36.pyc" />
+    <Content Include="Segmentation\DeepPathsearch\__pycache__\PathNetbody.cpython-37.pyc" />
+    <Content Include="Segmentation\De_NURD.pyproj" />
+    <Content Include="Segmentation\OCT_Seg.pyproj" />
+    <Content Include="Segmentation\__pycache__\analy.cpython-36.pyc" />
+    <Content Include="Segmentation\__pycache__\analy.cpython-37.pyc" />
+    <Content Include="Segmentation\__pycache__\analy_visdom.cpython-36.pyc" />
+    <Content Include="Segmentation\__pycache__\analy_visdom.cpython-37.pyc" />
+    <Content Include="Segmentation\__pycache__\Correct_sequence_iteration.cpython-36.pyc" />
+    <Content Include="Segmentation\__pycache__\Correct_sequence_iteration.cpython-37.pyc" />
+    <Content Include="Segmentation\__pycache__\cost_matrix.cpython-36.pyc" />
+    <Content Include="Segmentation\__pycache__\cost_matrix.cpython-37.pyc" />
+    <Content Include="Segmentation\__pycache__\median_filter_special.cpython-36.pyc" />
+    <Content Include="Segmentation\__pycache__\median_filter_special.cpython-37.pyc" />
+    <Content Include="Segmentation\__pycache__\path_finding.cpython-36.pyc" />
+    <Content Include="Segmentation\__pycache__\path_finding.cpython-37.pyc" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
