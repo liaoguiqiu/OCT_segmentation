@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d973a49b-def9-479d-848b-defa787b9be9}</ProjectGuid>
     <ProjectHome>Segmentation\</ProjectHome>
-    <StartupFile>analy.py</StartupFile>
+    <StartupFile>Seg_one.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -42,10 +42,13 @@
     <Compile Include="DeepPathsearch\path_train.py" />
     <Compile Include="DeepPathsearch\testDataReading.py" />
     <Compile Include="DeepPathsearch\test_Deep_finding.py" />
-    <Compile Include="De_NURD.py" />
+    <Compile Include="Read_video.py" />
     <Compile Include="display.py" />
     <Compile Include="median_filter_special.py" />
     <Compile Include="path_finding.py" />
+    <Compile Include="Seg_one.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DeepPathsearch" />
