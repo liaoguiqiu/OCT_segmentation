@@ -21,6 +21,9 @@
   <ItemGroup>
     <Compile Include="analy.py" />
     <Compile Include="analy_visdom.py" />
+    <Compile Include="A_line.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="correct_sequence.py" />
     <Compile Include="Correct_sequence_iteration.py" />
     <Compile Include="cost_matrix.py" />

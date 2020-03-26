@@ -40,16 +40,55 @@ class PATH:
          
         h, w= img.shape
         path = np.ones(w) 
+        path= path* float(Window_LEN/2)
+        last_p  = start_p
+        path_cost = 0
+        for i in range(w):
+            
+            #detemin search region
+            k0=last_p-10;
+            if(k0<0):
+              k0=0
+            k1=last_p+10;
+            if(k1>h):
+              k1=h
+            # find the min point
+            min=1000.0
+            record_last = last_p
+            for j in range(k0,k1):
+              #diffrence = (img[j,i] -img[record_last,i-1])
+              
+              # using the differential is niceer than using the point value
+              #because the diff can be used to multiply the path length
+              #diffrence =  np.median(img[j-1:j+2,i:i+3]) - img[record_last,i]
+              diffrence =  np.mean(img[j,i:i+2]) - img[record_last,i] 
+              # calculte the step path lenth to multiply the differential
+              varianc_pos = np.sqrt((j-record_last)**2+1)
+              distance = diffrence+ varianc_pos*0.01
+              if( distance<min):
+                  min  = distance
+                  last_p=j 
+            path_cost  = path_cost +  img[int(last_p),i]
+            path[i]= last_p 
+            
+        return path,path_cost/w
+    def search_a_path_2(img,start_p):
+
+       
+        img=img.astype(float)
+         
+        h, w= img.shape
+        path = np.ones(w) 
         path= path* int(Window_LEN/2)
         last_p  = start_p
         path_cost = 0
         for i in range(w):
             
             #detemin search region
-            k0=last_p-1;
+            k0=last_p-3;
             if(k0<0):
               k0=0
-            k1=last_p+2;
+            k1=last_p+4;
             if(k1>h):
               k1=h
             # find the min point
@@ -71,7 +110,6 @@ class PATH:
             path[i]= last_p 
             
         return path,path_cost/w
-
     def find_the_starting(img):
         starting_piont=int(Window_LEN/2)
         new = img[:,0:Window_LEN]
