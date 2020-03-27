@@ -12,13 +12,22 @@ test_num    = 100
 datadir = [fileFolder,int2str(500),'.jpg'];
 test_p = imread(datadir, 'jpg');
 A = test_p;
-Seque_num =1
+Seque_num =1;
 for i = 500 : test_num+500
-    
+
     datadir = [fileFolder,int2str(i),'.jpg'];
     test_p = imread(datadir, 'jpg');
+    shape = size(test_p)
+    
+    for j = 1: shape(1)
+      
+      line = test_p(j,:);
+      line = double( line); 
+      line(line <15 )=NaN;
+      New(j,:) = line ;
+    end
 %     A = cat(3,A,test_p);
-    B(:,:,Seque_num)= test_p;
+    B(:,:,Seque_num)= New;
     Seque_num  =Seque_num+1;
 end
  
@@ -28,7 +37,7 @@ plot3(x, y, z, 'b.');
 figure(2)
 % [X,Y,Z] = xyz2grd(B(:,1),B(:,2),B(:,3)); 
  
-B (B == 0) = NaN;
+ 
 S = size (B);
 [X, Y, Z] = ndgrid (1: S (1), 1: S (2), 1: S (3));
-scatter3 (X (:), Y (:), Z (:), 100, B (:), 'filled' )
+scatter3 (X (:), Y (:), Z (:), 300, B (:), 'filled' )
