@@ -13,49 +13,53 @@ from scipy.stats.stats import pearsonr
 import random
 from time import time
 from  path_finding import PATH
+from scipy.ndimage import gaussian_filter1d
+Manual_start_flag = True
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class Seg_One_Frame(object):
      def __init__(self):
          
-        self.operate_dir =   "../../saved_original_for_seg/502.jpg"
+        self.operate_dir =   "../../saved_original_for_seg/503.jpg"
         self.savedir_path = "../../saved_processed/"
+        self.display_flag = True
         from A_line import A_line_process
         self.aline = A_line_process()
-        self.bias = 100
+        self.bias = 50
     #input image to calculate the fist aveline, for get the local minimal value calculation 
      def calculate_the_average_line(self,img):
-        calculate_w = 10 # only calculate the front10 lines
+        calculate_w = 5 # only calculate the front10 lines
         H,W = img.shape
-        new = img[self.bias:H,0:calculate_w]
+        new = img[ :,5:5+calculate_w]
         ave_line=new.sum(axis=1)/calculate_w
         return ave_line
         #the  validation functionfor check the matrix and can also be used for validate the correction result
-     def seg_process(self ):
-        Img = cv2.imread(self.operate_dir)  #read the first one to get the image size
+     def seg_process(self, Img ):
         gray  =   cv2.cvtColor(Img, cv2.COLOR_BGR2GRAY)
         H,W   = gray.shape
-        gray = gray [: ,100: W -100]
-        Img = Img [: ,100: W -100]
+        #gray = gray [: ,100: W -100]
+        #Img = Img [: ,100: W -100]
         ave_line = self.calculate_the_average_line(gray)
         peaks  = self.aline.find_4peak(ave_line)
 
         H,W   = gray.shape
 
+
         #gray = cv2.blur(gray,(3,3))
-        #gray = cv2.blur(gray,(3,3))
-        gray = cv2.medianBlur(gray,15)
-        gray = cv2.GaussianBlur(gray,(3,1),0)
+        gray = cv2.medianBlur(gray,5)
+        gray = cv2.blur(gray,(5,5))
+
+        gray = cv2.GaussianBlur(gray,(3,3),0)
         #gray = cv2.bilateralFilter(gray,15,75,75)
         #gray = cv2.bilateralFilter(gray,15,75,75)
         ave_line = self.calculate_the_average_line(gray)
         peaks  = self.aline.find_4peak(ave_line)
         #gray = cv2.blur(gray,(5,5),0)
       
+        if self.display_flag == True :
+            cv2.imshow('ini',Img)
 
-        cv2.imshow('ini',Img)
 
-
-        cv2.imshow('blur',gray.astype(np.uint8))
+            cv2.imshow('blur',gray.astype(np.uint8))
 
 
         x_kernel = np.asarray([[-1, 0, 1], # Sobel kernel for x-direction
@@ -74,10 +78,12 @@ class Seg_One_Frame(object):
                                [ -1,-1,-1]])
         y_kernel = np.asarray([ # Sobel kernel for y-direction
                         [-1,-1],
+
+                        [-1,-1],
                         [-1,-1],
                         [-1,-1],
 
-                        [10,10],
+                        [12,12],
                         [-1,-1],
                         [-1,-1],
                         [-1,-1],
@@ -85,8 +91,39 @@ class Seg_One_Frame(object):
                         [-1,-1],
                         [-1,-1],
                         [-1,-1],
+                        [-1,-1],
+
 
                          
+                        ])
+        y_kernel = np.asarray([ # Sobel kernel for y-direction
+                        [-1,0 ],
+
+                        [-1,0 ],
+                        [-1,0 ],
+                        [-1,0 ],
+
+                        [22,0 ],
+                        [-1,0 ],
+                        [-1,0 ],
+                        [-1 ,0],
+                        [-1,0 ],
+                        [-1,0 ],
+                        [-1,0 ],
+                        [-1 ,0],
+                        [-1,0 ],
+                        [-1,0 ], 
+                        [-1,0 ],   
+                        [-1,0 ],   
+                        [-1,0 ],   
+                         [-1 ,0],
+                        [-1,0 ],
+                        [-1,0 ], 
+                        [-1,0 ],   
+                        [-1,0 ],   
+                        [-1,0 ],
+
+
                         ])
         y_kernel = y_kernel/8
         gray = gray.astype(np.float)              
@@ -100,23 +137,35 @@ class Seg_One_Frame(object):
         #sobel_y = cv2.GaussianBlur(sobel_y,(5,5),0)
         #sobel_y = cv2.bilateralFilter(sobel_y.astype(np.uint8),9,175,175)
         #find the start 4 point
+
+        sobel_y=sobel_y[self.bias:H-self.bias, :]
+        Img=Img[self.bias:H-self.bias, :]
+
         ave_line = self.calculate_the_average_line(sobel_y)
-        peaks  = self.aline.find_4peak(ave_line) +self.bias
+        peaks  = self.aline.find_4peak(ave_line) 
 
         Rever_img  = 255 - sobel_y
         
         
         #start_point = 596
         peaks = np.clip(peaks, 1,Rever_img.shape[0]-1)
+        if Manual_start_flag == True:
+            peaks[1] = peaks[0]+381-111
+            peaks[2] = peaks[0]+424-111
+            peaks[3] = peaks[0]+533-111
+
+
         path1,path_cost1=PATH.search_a_path(Rever_img,peaks[0])
         path2,path_cost1=PATH.search_a_path(Rever_img,peaks[1])
         path3,path_cost1=PATH.search_a_path(Rever_img,peaks[2])
         path4,path_cost1=PATH.search_a_path(Rever_img,peaks[3])
-        #path1 =path1-10
-        #path2 =path2-10
+        path1 =gaussian_filter1d(path1,5)
+        path2 =gaussian_filter1d(path2,5)
 
-        #path3 =path3-10
-        #path4 =path4-10
+        path3 =gaussian_filter1d(path3,5)
+        path4 =gaussian_filter1d(path4,5)
+
+ 
 
 
 
@@ -126,10 +175,14 @@ class Seg_One_Frame(object):
              sobel_y[int(path2[i]),i]=254
              sobel_y[int(path3[i]),i]=254
              sobel_y[int(path4[i]),i]=254
+        Dark_boundaries =  sobel_y *0
+        for i in range ( len(path1)):
+             Dark_boundaries[int(path1[i]),i]=254
+             Dark_boundaries[int(path2[i]),i]=200
+             Dark_boundaries[int(path3[i]),i]=150
+             Dark_boundaries[int(path4[i]),i]=80
 
 
-
-        cv2.imshow('revert',Rever_img.astype(np.uint8))
         [path1,path2,path3,path4]=np.clip([path1,path2,path3,path4],
                                           0,Img.shape[0]-1)
         for i in range ( Img.shape[1]):
@@ -139,23 +192,27 @@ class Seg_One_Frame(object):
              Img[int(path4[i]),i,:]=[0,0,0]
 
 
+        if self.display_flag == True:
+
+            cv2.imshow('revert',Rever_img.astype(np.uint8))
+
+            #cv2.imshow('path on blur',gray.astype(np.uint8))
+            cv2.imshow('Seg2',Img)
+
+            #sobel_y = sobel_y*0.1
+            #edges = cv2.Canny(gray,50, 300,10)
+            cv2.imshow('seg',sobel_y.astype(np.uint8))
+            cv2.imwrite(self.savedir_path  + str(1) +".jpg",sobel_y .astype(np.uint8))
 
 
-        #cv2.imshow('path on blur',gray.astype(np.uint8))
-        cv2.imshow('Seg2',Img)
-
-        #sobel_y = sobel_y*0.1
-        #edges = cv2.Canny(gray,50, 300,10)
-        cv2.imshow('seg',sobel_y.astype(np.uint8))
-        cv2.imwrite(self.savedir_path  + str(1) +".jpg",sobel_y .astype(np.uint8))
-
-
-        cv2.waitKey(1) 
+            cv2.waitKey(1) 
  
-        return  Img
+        return  Img,sobel_y,Dark_boundaries
         
 
 if __name__ == '__main__':
     frame_process  = Seg_One_Frame()
-    frame_process.seg_process()
+    Img = cv2.imread(frame_process.operate_dir)  #read the first one to get the image size
+
+    frame_process.seg_process(Img)
          

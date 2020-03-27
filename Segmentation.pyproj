@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d973a49b-def9-479d-848b-defa787b9be9}</ProjectGuid>
     <ProjectHome>Segmentation\</ProjectHome>
-    <StartupFile>Seg_one.py</StartupFile>
+    <StartupFile>Seg_sequence.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -50,6 +50,9 @@
     <Compile Include="median_filter_special.py" />
     <Compile Include="path_finding.py" />
     <Compile Include="Seg_one.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Seg_sequence.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -64,7 +64,7 @@ class PATH:
               diffrence =  np.mean(img[j,i:i+2]) - img[record_last,i] 
               # calculte the step path lenth to multiply the differential
               varianc_pos = np.sqrt((j-record_last)**2+1)
-              distance = diffrence+ varianc_pos*0.01
+              distance = diffrence+ varianc_pos*0.1
               if( distance<min):
                   min  = distance
                   last_p=j 

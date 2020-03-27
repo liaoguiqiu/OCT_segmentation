@@ -39,6 +39,12 @@ try:
 except ImportError: 
     import xml.etree.ElementTree as ET 
 import sys 
+def self_check_path_create(directory):
+    try:
+        os.stat(directory)
+    except:
+        os.mkdir(directory)  
+self_check_path_create(savedir_original)
 #GPU acceleration
 #from numba import vectorize
 #from numba import jit
@@ -63,11 +69,13 @@ Len_steam =5
 ret, frame = cap.read()
 if ret == True:
     H,W,_ = frame.shape
-H_start = 0
-H_end = H
+H_start = 80
+H_end = H-222
+W_start=100
+W_end=500
  
-steam=np.zeros((Len_steam,H_end-H_start,W))
-steam2=np.zeros((Len_steam,H_end-H_start,W))
+steam=np.zeros((Len_steam,H_end-H_start,W_end-W_start))
+steam2=np.zeros((Len_steam,H_end-H_start,W_end-W_start))
 save_sequence_num = 0
 while(cap.isOpened()):
   # Capture frame-by-frame
@@ -77,7 +85,7 @@ while(cap.isOpened()):
     # Display the resulting frame
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
    
-    crop_H_test = gray[H_start:H_end,:] 
+    crop_H_test = gray[H_start:H_end,W_start:W_end] 
     filter_img = crop_H_test
     
     filter_img= myfilter.gauss_filter_s(crop_H_test)
