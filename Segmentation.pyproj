@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d973a49b-def9-479d-848b-defa787b9be9}</ProjectGuid>
     <ProjectHome>Segmentation\</ProjectHome>
-    <StartupFile>Seg_sequence.py</StartupFile>
+    <StartupFile>data set\ImgJ_ROI.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -27,6 +27,9 @@
     <Compile Include="correct_sequence.py" />
     <Compile Include="Correct_sequence_iteration.py" />
     <Compile Include="cost_matrix.py" />
+    <Compile Include="data set\ImgJ_ROI.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Dataset_augmentor.py" />
     <Compile Include="Dataset_generator.py" />
     <Compile Include="DeepPathsearch\analy.py" />
@@ -58,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DeepPathsearch" />
+    <Folder Include="data set\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
