@@ -21,10 +21,11 @@ class Seg_One_Frame(object):
          
         self.operate_dir =   "../../saved_original_for_seg/503.jpg"
         self.savedir_path = "../../saved_processed/"
-        self.display_flag = True
+        self.display_flag = False
         from A_line import A_line_process
         self.aline = A_line_process()
         self.bias = 50
+        self.aligh_flag =True
     #input image to calculate the fist aveline, for get the local minimal value calculation 
      def calculate_the_average_line(self,img):
         calculate_w = 5 # only calculate the front10 lines
@@ -103,7 +104,7 @@ class Seg_One_Frame(object):
                         [-1,0 ],
                         [-1,0 ],
 
-                        [22,0 ],
+                        [28,0 ],
                         [-1,0 ],
                         [-1,0 ],
                         [-1 ,0],
@@ -122,17 +123,22 @@ class Seg_One_Frame(object):
                         [-1,0 ],   
                         [-1,0 ],   
                         [-1,0 ],
-
+                        [-1 ,0],
+                        [-1,0 ],
+                        [-1,0 ], 
+                        [-1,0 ],   
+                        [-1,0 ],   
+                        [-1,0 ],
 
                         ])
-        y_kernel = y_kernel/8
+        y_kernel = y_kernel/9
         gray = gray.astype(np.float)              
         #sobel_x = signal.convolve2d(gray, x_kernel) #
         sobel_y = signal.convolve2d(gray, y_kernel) # convolve kernels over images
         sobel_y = np.clip(sobel_y+10, 1,254)
-        #sobel_y = cv2.medianBlur(sobel_y,(5,1))
+        sobel_y = cv2.medianBlur(sobel_y.astype(np.uint8),5)
         sobel_y = cv2.GaussianBlur(sobel_y,(5,5),0)
-        sobel_y = cv2.blur(sobel_y,(3,3))
+        sobel_y = cv2.blur(sobel_y,(5,5))
 
         #sobel_y = cv2.GaussianBlur(sobel_y,(5,5),0)
         #sobel_y = cv2.bilateralFilter(sobel_y.astype(np.uint8),9,175,175)
@@ -151,7 +157,7 @@ class Seg_One_Frame(object):
         peaks = np.clip(peaks, 1,Rever_img.shape[0]-1)
         if Manual_start_flag == True:
             peaks[1] = peaks[0]+381-111
-            peaks[2] = peaks[0]+424-111
+            peaks[2] = peaks[0]+429-111
             peaks[3] = peaks[0]+533-111
 
 
@@ -207,7 +213,7 @@ class Seg_One_Frame(object):
 
             cv2.waitKey(1) 
  
-        return  Img,sobel_y,Dark_boundaries
+        return  Img,sobel_y,Dark_boundaries,[path1,path2,path3,path4]
         
 
 if __name__ == '__main__':

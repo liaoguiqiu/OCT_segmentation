@@ -23,13 +23,22 @@ class Seg_sequence(object):
         self.savedir_path = "../../saved_processed_seg/"
         self.savedir_path2 = "../../saved_processed_seg2/"
         self.savedir_path3 = "../../saved_processed_seg3/"
+        self.savedir_path4 = "../../saved_processed_seg4/"
+        #saved_processed_thickness
+        self.savedir_thick = "../../saved_processed_thickness/"
 
         self.self_check_path_create(self.savedir_path)
         self.self_check_path_create(self.savedir_path2)
         self.self_check_path_create(self.savedir_path3)
-
-
+        self.self_check_path_create(self.savedir_path4)
+        
+        self.thickness1=[]
+        self.thickness2=[]
+        self.thickness3=[]
+        self.path1_mean=[]
+        self.path1 =[]
         self.fram_seger = Seg_One_Frame()
+        self.Aligh_flag =True
      def self_check_path_create(self,directory):
         try:
             os.stat(directory)
@@ -63,13 +72,46 @@ class Seg_sequence(object):
                 real_num = sequence_num+500
                 img_path = self.operate_dir + str(real_num)+ ".jpg" # starting from 10
                 Img = cv2.imread(img_path)
-                SegImg,Sob,Boundaries = self.fram_seger.seg_process(Img)
+                SegImg,Sob,Image_with_bonud,Boundaries = self.fram_seger.seg_process(Img)
+                depth1 = Boundaries[1]-Boundaries[0]
+                depth2 = Boundaries[2]-Boundaries[1]
+                depth3 = Boundaries[3]-Boundaries[2]
+                path1 =  Boundaries[0]
 
+                path1mean = np.mean(path1)
+                self.path1_mean.append(path1mean)
+                self.thickness1.append(depth1)
+                self.thickness2.append(depth2)
+                self.thickness3.append(depth3)
+                self.path1.append(path1)
+                if self.Aligh_flag == True:
+                    cali_shift = -int(path1mean - self.path1_mean[0])
+                    Sob = np.roll(Sob, cali_shift, axis = 0)
+                    Image_with_bonud= np.roll(Image_with_bonud, cali_shift, axis = 0)
+                    Hs,Ws = Image_with_bonud.shape
+                    shifter = self.path1[0] -self.path1[0][0]
+                    for iter in range(Ws):
+                        lineshift= -int(shifter[iter] )
+                        Image_with_bonud[:,iter] =np.roll( Image_with_bonud[:,iter] ,lineshift)
                 # save the segmentation reult
                 cv2.imwrite(self.savedir_path  + str(real_num) +".jpg", Img)
                 cv2.imwrite(self.savedir_path2  + str(real_num) +".jpg", Sob)
 
-                cv2.imwrite(self.savedir_path3  + str(real_num) +".jpg", Boundaries)
+                cv2.imwrite(self.savedir_path3  + str(real_num) +".jpg", Image_with_bonud)
+                if sequence_num>3:
+                    # change the list to imag array
+                    H1  = len(self.thickness1)
+                    W1  = len(self.thickness1[0])
+                    thi_img1 = np.array(self.thickness1)/2
+                    thi_img2 = np.array(self.thickness2)/2
+                    thi_img3 = np.array(self.thickness3)/2
+
+                    cv2.imwrite(self.savedir_thick  +   "1.jpg", thi_img1.astype(np.uint8))
+                    cv2.imwrite(self.savedir_thick  +   "2.jpg", thi_img2.astype(np.uint8))
+                    cv2.imwrite(self.savedir_thick  +   "3.jpg", thi_img3.astype(np.uint8))
+
+
+
 
                     
 

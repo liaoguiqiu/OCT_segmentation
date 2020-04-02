@@ -44,16 +44,17 @@ class PATH:
         last_p  = start_p
         path_cost = 0
         for i in range(w):
-            
+
+            last_p = min (last_p,h-1)
             #detemin search region
             k0=last_p-10;
             if(k0<0):
               k0=0
             k1=last_p+10;
-            if(k1>h):
-              k1=h
+            if(k1>h-1):
+              k1=h-1
             # find the min point
-            min=1000.0
+            minval=1000.0
             record_last = last_p
             for j in range(k0,k1):
               #diffrence = (img[j,i] -img[record_last,i-1])
@@ -64,9 +65,11 @@ class PATH:
               diffrence =  np.mean(img[j,i:i+2]) - img[record_last,i] 
               # calculte the step path lenth to multiply the differential
               varianc_pos = np.sqrt((j-record_last)**2+1)
-              distance = diffrence+ varianc_pos*0.1
-              if( distance<min):
-                  min  = distance
+              
+              distance = diffrence+ varianc_pos*0.01* abs(diffrence)
+               
+              if( distance<minval):
+                  minval  = distance
                   last_p=j 
             path_cost  = path_cost +  img[int(last_p),i]
             path[i]= last_p 
