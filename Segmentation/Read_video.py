@@ -70,8 +70,8 @@ ret, frame = cap.read()
 if ret == True:
     H,W,_ = frame.shape
 H_start = 80
-H_end = H-222
-W_start=100
+H_end = H-0
+W_start=200
 W_end=500
  
 steam=np.zeros((Len_steam,H_end-H_start,W_end-W_start))
