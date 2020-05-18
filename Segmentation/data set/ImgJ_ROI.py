@@ -11,8 +11,8 @@ import pandas as pd
 
 class  Read_read_check_ROI_label(object):
     def __init__(self ):
-        self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL/"
-        self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL/"
+        self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL-BACKSIDE-center/"
+        self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL-BACKSIDE-center/"
     def check_one_folder (self):
         for i in os.listdir(self.roi_dir):
     #for i in os.listdir("E:\\estimagine\\vs_project\\PythonApplication_data_au\\pic\\"):
@@ -52,13 +52,17 @@ class  Read_read_check_ROI_label(object):
                     path3x = rois[line_name3]['x']
                     path3l =  np.ones(W) * np.nan
                     for j in range (len(path0x)):
-                         path0l[path0x[j]-2] = float (path0y[j] -1)
+                         this_index = np.clip(  path0x[j]-1, 0,W-1)
+                         path0l[this_index] = float (path0y[j] -1)
                     for j in range (len(path1x)):
-                         path1l[path1x[j]-2] = float (path1y[j] -1)
+                         this_index = np.clip(  path1x[j]-1, 0,W-1)
+                         path1l[this_index] = float (path1y[j] -1)
                     for j in range (len(path2x)):
-                         path2l[path2x[j]-2] = float (path2y[j] -1)                 
+                         this_index = np.clip(  path2x[j]-1, 0,W-1)
+                         path2l[this_index] = float (path2y[j] -1)                 
                     for j in range (len(path3x)):
-                         path3l[path3x[j]-2] = float (path3y[j] -1)
+                         this_index = np.clip(  path3x[j]-1, 0,W-1)
+                         path3l[this_index] = float (path3y[j] -1)
 
                     add_3   = np.append(path0l[::-1],path0l,axis=0) # cascade
                     add_3   = np.append(add_3,path0l[::-1],axis=0) # cascade

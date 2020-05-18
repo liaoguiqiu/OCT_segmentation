@@ -24,6 +24,7 @@ class Seg_sequence(object):
         self.savedir_path2 = "../../saved_processed_seg2/"
         self.savedir_path3 = "../../saved_processed_seg3/"
         self.savedir_path4 = "../../saved_processed_seg4/"
+        self.savedir_flat = "../../saved_processed_seg_flat_origin/"
         #saved_processed_thickness
         self.savedir_thick = "../../saved_processed_thickness/"
 
@@ -31,6 +32,8 @@ class Seg_sequence(object):
         self.self_check_path_create(self.savedir_path2)
         self.self_check_path_create(self.savedir_path3)
         self.self_check_path_create(self.savedir_path4)
+        self.self_check_path_create(self.savedir_flat)
+
         
         self.thickness1=[]
         self.thickness2=[]
@@ -93,6 +96,12 @@ class Seg_sequence(object):
                     for iter in range(Ws):
                         lineshift= -int(shifter[iter] )
                         Image_with_bonud[:,iter] =np.roll( Image_with_bonud[:,iter] ,lineshift)
+                        if iter<W:
+                            Img[:,iter,0]   =  np.roll( Img[:,iter,0] ,lineshift)
+                            Img[:,iter,1]   =  np.roll( Img[:,iter,1] ,lineshift)
+                            Img[:,iter,2]   =  np.roll( Img[:,iter,2] ,lineshift)
+
+
                 # save the segmentation reult
                 cv2.imwrite(self.savedir_path  + str(real_num) +".jpg", Img)
                 cv2.imwrite(self.savedir_path2  + str(real_num) +".jpg", Sob)
