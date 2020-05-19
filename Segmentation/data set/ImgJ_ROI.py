@@ -11,8 +11,10 @@ import pandas as pd
 
 class  Read_read_check_ROI_label(object):
     def __init__(self ):
-        self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL-BACKSIDE-center/"
-        self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL-BACKSIDE-center/"
+        #self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL-BACKSIDE-center/"
+        #self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL-BACKSIDE-center/"
+        self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL/"
+        self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL/"
     def check_one_folder (self):
         for i in os.listdir(self.roi_dir):
     #for i in os.listdir("E:\\estimagine\\vs_project\\PythonApplication_data_au\\pic\\"):
@@ -28,15 +30,37 @@ class  Read_read_check_ROI_label(object):
                     roi_dir = self.roi_dir + a  +b
                     with ZipFile(roi_dir, 'r') as zipObj:
                            # Get list of files names in zip
-                           listOfiles = zipObj.namelist()
-                           line_name0,_ = os.path.splitext(listOfiles[0])
-                           line_name1,_ = os.path.splitext(listOfiles[1])
-                           line_name2,_ = os.path.splitext(listOfiles[2])
-                           line_name3,_ = os.path.splitext(listOfiles[3])
+                           #listOfiles = zipObj.namelist()
+                           # this line of code is importanct sice the the formmer one will change the sequence 
+                           listOfiles = zipObj.infolist()
+
+                           line_name0,_ = os.path.splitext(listOfiles[0].filename)
+                           number0   = int(line_name0.split("-")[0])
+                 
+                           line_name1,_ = os.path.splitext(listOfiles[1].filename)
+                           number1   = int(line_name1.split("-")[0])
+
+                           line_name2,_ = os.path.splitext(listOfiles[2].filename)
+                           number2   = int(line_name2.split("-")[0])
+
+                           line_name3,_ = os.path.splitext(listOfiles[3].filename)
+                           number3   = int(line_name3.split("-")[0])
+
+                           number_list= [number0,number1,number2,number3]
+                           new_index  = np.argsort( number_list)
+
+                           name_list = [line_name0,line_name1,line_name2,line_name3]
+                           line_name0 = name_list[new_index[0]]
+                           line_name1 = name_list[new_index[1]]
+                           line_name2 = name_list[new_index[2]]
+                           line_name3 = name_list[new_index[3]]
+
+
 
 
                         
                     rois = read_roi_zip(roi_dir)
+                     
                     gray  =   cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
                     H,W   = gray.shape
                     path0y = rois[line_name0]['y']
@@ -91,10 +115,10 @@ class  Read_read_check_ROI_label(object):
                     #path0  = signal.resample(path0, W)
                     for j in range (len(path0ln)):
                          #path0l[path0x[j]]
-                         img1[int(path0ln[j]),j,:]=[254,0,0]
-                         img1[int(path1ln[j]),j,:]=[0,254,0]
-                         img1[int(path2ln[j]),j,:]=[0,0,254]
-                         img1[int(path3ln[j]),j,:]=[0,0,0]
+                         img1[int(path0ln[j])+1,j,:]=img1[int(path0ln[j])-1,j,:]=img1[int(path0ln[j]),j,:]=[254,0,0]
+                         img1[int(path1ln[j]+1),j,:]=img1[int(path1ln[j]-1),j,:]=img1[int(path1ln[j]),j,:]=[0,254,0]
+                         img1[int(path2ln[j]+1),j,:]=img1[int(path2ln[j]-1),j,:]=img1[int(path2ln[j]),j,:]=[0,0,254]
+                         img1[int(path3ln[j]+1),j,:]=img1[int(path3ln[j]-1),j,:]=img1[int(path3ln[j]),j,:]=[254,254,254]
 
                     cv2.imshow('pic',img1)
                     print(str(a))
