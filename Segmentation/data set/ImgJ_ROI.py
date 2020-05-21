@@ -8,13 +8,18 @@ import random
 from zipfile import ZipFile
 import scipy.signal as signal
 import pandas as pd
-
+from generator_contour import Save_Contour_pkl
 class  Read_read_check_ROI_label(object):
     def __init__(self ):
         #self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL-BACKSIDE-center/"
         #self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL-BACKSIDE-center/"
-        self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL/"
-        self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL/"
+        self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
+        self.image_dir   = self.database_root + "pic/"
+        self.roi_dir =  self.database_root + "seg label/"
+        self.img_num = 0
+        self.contours = []
+        self.saver = Save_Contour_pkl()
+
     def check_one_folder (self):
         for i in os.listdir(self.roi_dir):
     #for i in os.listdir("E:\\estimagine\\vs_project\\PythonApplication_data_au\\pic\\"):
@@ -119,6 +124,11 @@ class  Read_read_check_ROI_label(object):
                          img1[int(path1ln[j]+1),j,:]=img1[int(path1ln[j]-1),j,:]=img1[int(path1ln[j]),j,:]=[0,254,0]
                          img1[int(path2ln[j]+1),j,:]=img1[int(path2ln[j]-1),j,:]=img1[int(path2ln[j]),j,:]=[0,0,254]
                          img1[int(path3ln[j]+1),j,:]=img1[int(path3ln[j]-1),j,:]=img1[int(path3ln[j]),j,:]=[254,254,254]
+                    
+                    #save this result 
+                    self.img_num = a
+                    self.contours = [path0ln, path1ln, path2ln, path3ln]
+                    self.saver.append_new_name_contour (self.img_num,self.contours,self.database_root)
 
                     cv2.imshow('pic',img1)
                     print(str(a))

@@ -39,6 +39,9 @@ try:
 except ImportError: 
     import xml.etree.ElementTree as ET 
 import sys 
+
+
+#use this small function to check whether the file dir exist
 def self_check_path_create(directory):
     try:
         os.stat(directory)
