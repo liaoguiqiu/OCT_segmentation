@@ -16,9 +16,9 @@ class  Read_read_check_ROI_label(object):
     def __init__(self ):
         #self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL-BACKSIDE-center/"
         #self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL-BACKSIDE-center/"
-        self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
+        #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL-BACKSIDE-center/"
-        #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
+        self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
 
         self.image_dir   = self.database_root + "pic/"
         self.roi_dir =  self.database_root + "seg label/"
@@ -87,6 +87,7 @@ class  Read_read_check_ROI_label(object):
                         pathx = rois[line_name]['x']
                         num_points = len(pathx)
                         path_w  = pathx[num_points-1] - pathx[0]
+                        # sometimes the contour is plot in reversed direction  
                         if  path_w<0:
                             path_w=-path_w
                             pathy=pathy[::-1]
@@ -126,8 +127,9 @@ class  Read_read_check_ROI_label(object):
 
                     #save this result 
                     self.img_num = a
-                    #self.contours = [path0ln, path1ln, path2ln, path3ln]
+                    #self.contours_x = [path0ln, path1ln, path2ln, path3ln]
                     #self.saver.append_new_name_contour (self.img_num,self.contours,self.database_root)
+                    self.saver.append_new_name_contour (self.img_num,self.contours_x,self.contours_y,self.database_root)
 
                     cv2.imshow('pic',img1)
                     print(str(a))
