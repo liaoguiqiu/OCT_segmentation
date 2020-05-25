@@ -16,9 +16,9 @@ class  Read_read_check_ROI_label(object):
     def __init__(self ):
         #self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL-BACKSIDE-center/"
         #self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL-BACKSIDE-center/"
-        #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
+        self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL-BACKSIDE-center/"
-        self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
+        #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
 
         self.image_dir   = self.database_root + "pic/"
         self.roi_dir =  self.database_root + "seg label/"

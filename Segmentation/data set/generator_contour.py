@@ -7,6 +7,7 @@ from matplotlib.pyplot import *
 #from mpl_toolkits.mplot3d import Axes3D
 from median_filter_special import  myfilter
 from cost_matrix import  COSTMtrix
+from scipy.ndimage import gaussian_filter1d
 
 #PythonETpackage for xml file edition
 try: 
@@ -61,7 +62,7 @@ class Generator_Contour(object):
     def __init__(self ):
         self.origin_data = Save_Contour_pkl()
         self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
-        #self.database_root ="../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
+        self.database_root ="../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
         self.origin_data =self.origin_data.read_data(self.database_root)
         self.back_ground_root  =  "../../"     + "saved_background_for_generator/"
 
@@ -226,17 +227,20 @@ class Generator_Contour(object):
             cv2.imshow('origin',display.astype(np.uint8))
             
             #generate the signal 
-            dx1 = 200
-            dx2=500
-            dy1=700
-            dy2=900
+            dx1 = 250
+            dx2=800
+            dy1=200
+            dy2=1000
             width =  dx2-dx1
             sample = np.arange(width)
-            new_contoury = np.sin( np.pi/width * sample)
-            new_contoury = -new_contoury*(dy2-dy1)+dy1
+            r_vector   = np.random.rand(width)*20
+            r_vector = gaussian_filter1d (r_vector ,2)
+            new_contoury = np.sin( 1*np.pi/width * sample)
+            new_contoury = -new_contoury*(dy2-dy1)+dy2
+            new_contoury=new_contoury+r_vector
             new_contourx = np.arange(dx1, dx2)
-            new_contourx=contour0x  
-            new_contoury=contour0y
+            #new_contourx=contour0x  +200
+            #new_contoury=contour0y-200
 
             H_new = 1024
             W_new = 1024
@@ -251,11 +255,17 @@ class Generator_Contour(object):
                                                  new_contourx,new_contoury)
             new_image=np.append(patch_l,patch,axis=1) 
             new_image=np.append(new_image,patch_r,axis=1) 
-            new_image =new_image*0.8
+            #new_image =new_image*0.8
             cv2.imshow('w1',new_image.astype(np.uint8))
 
-            self.display_contour(new_image,new_contourx,new_contoury,'warped')  
+            #self.display_contour(new_image,new_contourx,new_contoury,'warped')  
+            display  = Basic_Operator.gray2rgb(new_image)
+            display  = Basic_Operator.draw_coordinates_color(display,new_contourx,new_contoury,1)
+
+            #display = Basic_Operator.draw_coordinates_color(img_or,contour0x,contour0y,1)
+            cv2.imshow('color',display.astype(np.uint8))
             cv2.waitKey(10)   
+
             print(str(name))
             
 

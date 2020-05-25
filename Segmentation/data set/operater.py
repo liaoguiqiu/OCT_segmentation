@@ -24,3 +24,10 @@ class Basic_Operator:
                     dx = np.clip(vx[j],2,W-2)
                     img1[int(dy)+1,dx,:]=img1[int(dy)-1,dx,:]=img1[int(dy),dx,:]=painter
             return img1
+    def gray2rgb(img):
+        new=np.zeros((img.shape[0],img.shape[1],3))
+        new[:,:,0]  = img
+        new[:,:,1]  = img
+        new[:,:,2]  = img
+
+        return new
