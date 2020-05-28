@@ -62,14 +62,45 @@ class Generator_Contour(object):
     def __init__(self ):
         self.origin_data = Save_Contour_pkl()
         self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
-        self.database_root ="../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
+        #self.database_root ="../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
         self.origin_data =self.origin_data.read_data(self.database_root)
         self.back_ground_root  =  "../../"     + "saved_background_for_generator/"
 
         self.save_img_dir = "../../"     + "saved_generated_contour/"
         self.save_contour_dir = "../../"     + "saved_stastics_coutour_generated/"
         self.display_flag =True
+        self.img_num= []
+        self.contoursx = []
+        self.contoursy = []
         #check or create this path
+    def append_new_name_contour(self,number,this_contoursx,this_contoursy,dir):
+        #buffer
+        self.img_num.append(number)
+        self.contoursx.append(this_contoursx)
+        self.contoursy.append(this_contoursy)
+
+        #save the data 
+        save_path = dir #+ "seg label pkl/"
+        with open(save_path+'contours.pkl', 'wb') as f:
+            pickle.dump(self , f, pickle.HIGHEST_PROTOCOL)
+        pass
+    def check(self):
+        saved_path  = self.save_contour_dir
+        data = pickle.load(open(saved_path+'contours.pkl','rb'),encoding='iso-8859-1')
+        file_len = len(data.img_num)
+        for num in range(file_len):
+                name = data.img_num[num]
+                img_path = self.save_img_dir +  str(name) + ".jpg"
+                img_or = cv2.imread(img_path)
+                img1  =   cv2.cvtColor(img_or, cv2.COLOR_BGR2GRAY)
+                H,W = img1.shape
+                #just use the first contour 
+                contour0x  = data.contoursx[num]
+                contour0y  = data.contoursy[num]
+                # draw this original contour 
+                display = Basic_Operator.draw_coordinates_color(img_or,contour0x,contour0y,1)
+                cv2.imshow('origin',display.astype(np.uint8))
+        pass
     #display the the contour  gray 
     def display_contour(self,img,contourx,contoury,title):
         if self.display_flag ==True:
@@ -81,58 +112,10 @@ class Generator_Contour(object):
                 cv2.imshow(title,display.astype(np.uint8) )
                 cv2.waitKey(10)   
         pass
-    def warp_padding(self,img,contour0,new_contour):
-        shift_vector =  new_contour  - contour0
-        new_image  = img
-        for iter in range(len(shift_vector)):
-            lineshift= int(shift_vector[iter] )
-            new_image[:,iter] =np.roll( img[:,iter] ,lineshift)
-            # The carachter within the contour need special stratigies to maintain 
-            if(lineshift>0):#
-                origin_point  = int(contour0[iter])
-                new_image[0:lineshift,iter]= signal.resample(img[0:origin_point,iter], 
-                                                             lineshift)
-                pass
-        return new_image
-    #just roll one line 
-    def warp_padding_line1(self,line,y0,new_y):
-        shift  =  int(new_y  - y0)
-        new_y = int(new_y)
-        y0 = int (y0)
-        line_new =np.roll( line ,shift)
-        # The carachter within the contour need special stratigies to maintain 
-        if(shift>0):#
-            line_new[0:new_y]= signal.resample(line[0:y0],new_y)           
-        return line_new
-    def warp_padding_line2(self,line,y0,new_y):
-        shift  =  int(new_y  - y0)
-        new_y = int(new_y)
-        y0 = int (y0)
-        line_new =np.roll( line ,shift)
-        # The carachter within the contour need special stratigies to maintain 
-        if(shift>0):#
-            line_new[0:new_y]= signal.resample(line[int(y0/2):y0],new_y)           
-        return line_new
-    #fill in a long vector with a small er on e
-    #this bversion just use the resample
-    #next version can use the clone
-    def fill_lv_with_sv1(self,sv,H):
-        #h = len(sv)
-        #div = (H/h)
-        #if div > 2:
-        #    for i in range(3):
-        #        sv=np.append(sv,sv)
-        lv=signal.resample(sv, H)     
-        return lv
-    def fill_lv_with_sv2(self,sv,H):
-        lv = np.zeros(H)
-        h = len(sv)
-        div = (H/h)
-        div= int(math.log2(div))+1
-        for i in range(div):
-            sv=np.append(sv,sv)
-        lv = sv[0:H] 
-        return lv
+    
+
+    
+
 
     # to generate synthetic background with a number of origin img and return a image with size of H W
     def generate_background_image1(self,number,H,W):
@@ -166,116 +149,76 @@ class Generator_Contour(object):
             source_h  = h_list[pic_it]
             new[:,i] = self.fill_lv_with_sv1(source_line,H)
         return new
-    # to generate synthetic background with this image with label 
-    def generate_background_image2(self,img,contourx,contoury,H,W):
-        
-        points = len(contourx)
-        new  = np.zeros((H,W))
-        #generate line by line 
-        for i in range(W):
-            #random select a source
- 
-            #random select a A-line
-            line_it = int( np.random.random_sample()*points)
-            line_it = np.clip(line_it,0,points-1) 
-            y = contoury[line_it]
-            #pick part of the A-line betwenn contour and scanning center
-            source_line = img[int(0.3*y):int(0.6*y),contourx[line_it]]
-
-            #source_h  = h_list[pic_it]
-            #new[:,i] = self.fill_lv_with_sv1(source_line,H)
-            new[:,i] = self.fill_lv_with_sv1(source_line,H)
-
-        return new
     
-    def generate_patch_with_contour(self,img1,H_new,contour0x,contour0y,
-                                    new_contourx,new_contoury):
-        H,W  = img1.shape
-        img1 = cv2.resize(img1, (W,H_new), interpolation=cv2.INTER_AREA)
-        contour0y = contour0y*H_new/H
-        points = len(contour0x)
-        points_new = len(new_contoury)
-        W_new  = points_new
-        new  = np.zeros((H_new,W_new))
-        for i in range(W_new):
-            line_it = int( np.random.random_sample()*points)
-            line_it = np.clip(line_it,0,points-1) 
-            source_line = img1[:,contour0x[line_it]]
-            #new[:,i] = self.warp_padding_line1(source_line, contour0y[line_it],new_contoury[i])
-            new[:,i] = self.warp_padding_line2(source_line, contour0y[line_it],new_contoury[i])
+    
 
-            #random select a source
-            pass
-        pass
-        return new
         
 
     def generate(self):
         file_len = len(self.origin_data.img_num)
         #for num  in  self.origin_data.img_num:
-        for num in range(file_len):
-            name = self.origin_data.img_num[num]
-            img_path = self.database_root + "pic/" + name + ".jpg"
-            img_or = cv2.imread(img_path)
-            img1  =   cv2.cvtColor(img_or, cv2.COLOR_BGR2GRAY)
-            H,W = img1.shape
-            #just use the first contour 
-            contour0x  = self.origin_data.contoursx[num][0]
-            contour0y  = self.origin_data.contoursy[num][0]
-            # draw this original contour 
-            display = Basic_Operator.draw_coordinates_color(img_or,contour0x,contour0y,1)
-            cv2.imshow('origin',display.astype(np.uint8))
+        img_id =1
+        while(1):
+            for num in range(file_len):
+                name = self.origin_data.img_num[num]
+                img_path = self.database_root + "pic/" + name + ".jpg"
+                img_or = cv2.imread(img_path)
+                img1  =   cv2.cvtColor(img_or, cv2.COLOR_BGR2GRAY)
+                H,W = img1.shape
+                #just use the first contour 
+                contour0x  = self.origin_data.contoursx[num][0]
+                contour0y  = self.origin_data.contoursy[num][0]
+                # draw this original contour 
+                display = Basic_Operator.draw_coordinates_color(img_or,contour0x,contour0y,1)
+                cv2.imshow('origin',display.astype(np.uint8))
             
-            #generate the signal 
-            dx1 = 250
-            dx2=800
-            dy1=200
-            dy2=1000
-            width =  dx2-dx1
-            sample = np.arange(width)
-            r_vector   = np.random.rand(width)*20
-            r_vector = gaussian_filter1d (r_vector ,2)
-            new_contoury = np.sin( 1*np.pi/width * sample)
-            new_contoury = -new_contoury*(dy2-dy1)+dy2
-            new_contoury=new_contoury+r_vector
-            new_contourx = np.arange(dx1, dx2)
-            #new_contourx=contour0x  +200
-            #new_contoury=contour0y-200
+                #new_contourx=contour0x  +200
+                #new_contoury=contour0y-200
 
-            H_new = 1024
-            W_new = 1024
-            num_points = len(new_contourx)
-            #patch_l = generator.generate_background_image1(1,H_new,new_contourx[0])
-            patch_l = self.generate_background_image2(img1,contour0x,contour0y,H_new,new_contourx[0])
-            patch_r = self.generate_background_image2(img1,contour0x,contour0y,H_new,W_new -new_contourx[num_points-1])
+                H_new = 1024
+                W_new = 1024
+                #generate the signal 
 
-            #patch_r = generator.generate_background_image1(1,H_new,W_new -new_contourx[num_points-1])
-            #warp the contour 
-            patch = self.generate_patch_with_contour(img1,H_new,contour0x,contour0y,
-                                                 new_contourx,new_contoury)
-            new_image=np.append(patch_l,patch,axis=1) 
-            new_image=np.append(new_image,patch_r,axis=1) 
-            #new_image =new_image*0.8
-            cv2.imshow('w1',new_image.astype(np.uint8))
+                new_contourx,new_contoury = Basic_Operator.random_shape_contour(H_new,W_new,contour0x,contour0y)
 
-            #self.display_contour(new_image,new_contourx,new_contoury,'warped')  
-            display  = Basic_Operator.gray2rgb(new_image)
-            display  = Basic_Operator.draw_coordinates_color(display,new_contourx,new_contoury,1)
+                num_points = len(new_contourx)
+                #patch_l = generator.generate_background_image1(1,H_new,new_contourx[0])
+                patch_l = Basic_Operator .generate_background_image2(img1,contour0x,contour0y,H_new,new_contourx[0])
+                patch_r = Basic_Operator .generate_background_image2(img1,contour0x,contour0y,H_new,W_new -new_contourx[num_points-1])
 
-            #display = Basic_Operator.draw_coordinates_color(img_or,contour0x,contour0y,1)
-            cv2.imshow('color',display.astype(np.uint8))
-            cv2.waitKey(10)   
+                #patch_r = generator.generate_background_image1(1,H_new,W_new -new_contourx[num_points-1])
+                #warp the contour 
+                patch = Basic_Operator .generate_patch_with_contour(img1,H_new,contour0x,contour0y,
+                                                     new_contourx,new_contoury)
+                new_image=np.append(patch_l,patch,axis=1) 
+                new_image=np.append(new_image,patch_r,axis=1) 
+                #new_image =new_image*0.8
+                cv2.imshow('w1',new_image.astype(np.uint8))
 
-            print(str(name))
+                #self.display_contour(new_image,new_contourx,new_contoury,'warped')  
+                display  = Basic_Operator.gray2rgb(new_image)
+                display  = Basic_Operator.draw_coordinates_color(display,new_contourx,new_contoury,1)
+
+                #display = Basic_Operator.draw_coordinates_color(img_or,contour0x,contour0y,1)
+                cv2.imshow('color',display.astype(np.uint8))
+                cv2.waitKey(10)   
+
+                print(str(name))
+                self.append_new_name_contour(img_id,new_contourx,new_contoury,self.save_contour_dir)
+                cv2.imwrite(self.save_img_dir  + str(img_id) +".jpg",new_image )
+                img_id +=1
+
             
 
 
-            pass
+                pass
 
 
 if __name__ == '__main__':
     generator  = Generator_Contour()
-    generator.generate()
+    generator.check()
+
+    #generator.generate()
     #back = generator.generate_background_image1(3,1024,1024)
     #cv2.imshow('origin',back.astype(np.uint8))
     cv2.waitKey(10) 
