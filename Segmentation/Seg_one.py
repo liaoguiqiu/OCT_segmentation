@@ -14,14 +14,14 @@ import random
 from time import time
 from  path_finding import PATH
 from scipy.ndimage import gaussian_filter1d
-Manual_start_flag = True
+Manual_start_flag = False
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class Seg_One_Frame(object):
      def __init__(self):
          
         self.operate_dir =   "../../saved_original_for_seg/503.jpg"
         self.savedir_path = "../../saved_processed/"
-        self.display_flag = False
+        self.display_flag = True
         from A_line import A_line_process
         self.aline = A_line_process()
         self.bias = 50
@@ -46,8 +46,8 @@ class Seg_One_Frame(object):
 
 
         #gray = cv2.blur(gray,(3,3))
-        gray = cv2.medianBlur(gray,5)
-        gray = cv2.blur(gray,(5,5))
+        #gray = cv2.medianBlur(gray,5)
+        #gray = cv2.blur(gray,(5,5))
 
         gray = cv2.GaussianBlur(gray,(3,3),0)
         #gray = cv2.bilateralFilter(gray,15,75,75)
@@ -77,26 +77,26 @@ class Seg_One_Frame(object):
                                [-1,-1,-1],
                                [-1,-1,-1],
                                [ -1,-1,-1]])
-        y_kernel = np.asarray([ # Sobel kernel for y-direction
-                        [-1,-1],
+        #y_kernel = np.asarray([ # Sobel kernel for y-direction
+        #                [-1,-1],
 
-                        [-1,-1],
-                        [-1,-1],
-                        [-1,-1],
+        #                [-1,-1],
+        #                [-1,-1],
+        #                [-1,-1],
 
-                        [12,12],
-                        [-1,-1],
-                        [-1,-1],
-                        [-1,-1],
-                        [-1,-1],
-                        [-1,-1],
-                        [-1,-1],
-                        [-1,-1],
-                        [-1,-1],
+        #                [12,12],
+        #                [-1,-1],
+        #                [-1,-1],
+        #                [-1,-1],
+        #                [-1,-1],
+        #                [-1,-1],
+        #                [-1,-1],
+        #                [-1,-1],
+        #                [-1,-1],
 
 
                          
-                        ])
+        #                ])
         y_kernel = np.asarray([ # Sobel kernel for y-direction
                         [-1,0 ],
 
@@ -155,47 +155,54 @@ class Seg_One_Frame(object):
         
         #start_point = 596
         peaks = np.clip(peaks, 1,Rever_img.shape[0]-1)
+        #new_peak = np.zeros(4)
+        #new_peak=peaks
+        #new_peak[3] = peaks[2]+35
+        #peaks =  new_peak
         if Manual_start_flag == True:
-            peaks[1] = peaks[0]+381-111
-            peaks[2] = peaks[0]+429-111
-            peaks[3] = peaks[0]+533-111
+            peaks[1] = peaks[0]+472-293
+            peaks[2] = peaks[0]+500-293
+            peaks[3] = peaks[0]+677-293
 
 
-        path1,path_cost1=PATH.search_a_path(Rever_img,peaks[0])
-        path2,path_cost1=PATH.search_a_path(Rever_img,peaks[1])
-        path3,path_cost1=PATH.search_a_path(Rever_img,peaks[2])
-        path4,path_cost1=PATH.search_a_path(Rever_img,peaks[3])
-        path1 =gaussian_filter1d(path1,5)
-        path2 =gaussian_filter1d(path2,5)
+        path1,path_cost1=PATH.search_a_path(Rever_img,int(peaks[0]))
+        path2,path_cost1=PATH.search_a_path(Rever_img,int(peaks[1]))
+        path3,path_cost1=PATH.search_a_path(Rever_img,int(peaks[2]))
+        path4,path_cost1=PATH.search_a_path(Rever_img,int(peaks[3]))
+        path1 =gaussian_filter1d(path1,2)
+        path2 =gaussian_filter1d(path2,2)
 
-        path3 =gaussian_filter1d(path3,5)
-        path4 =gaussian_filter1d(path4,5)
+        path3 =gaussian_filter1d(path3,2)
+        path4 =gaussian_filter1d(path4,2)
 
- 
+        path4=path3
+        #path2 = path3
+        path3 = path2+35
 
-
-
-
+        [path1,path2,path3,path4]=np.clip([path1,path2,path3,path4],
+                                          0,sobel_y.shape[0]-1)
         for i in range ( len(path1)):
              sobel_y[int(path1[i]),i]=254
              sobel_y[int(path2[i]),i]=254
              sobel_y[int(path3[i]),i]=254
              sobel_y[int(path4[i]),i]=254
         Dark_boundaries =  sobel_y *0
+        [path1,path2,path3,path4]=np.clip([path1,path2,path3,path4],
+                                          0,Dark_boundaries.shape[0]-2)
         for i in range ( len(path1)):
              Dark_boundaries[int(path1[i]),i]=254
-             Dark_boundaries[int(path2[i]),i]=200
-             Dark_boundaries[int(path3[i]),i]=150
-             Dark_boundaries[int(path4[i]),i]=80
+             Dark_boundaries[int(path2[i]),i]=220
+             Dark_boundaries[int(path3[i]),i]=199
+             Dark_boundaries[int(path4[i]),i]=180
 
 
         [path1,path2,path3,path4]=np.clip([path1,path2,path3,path4],
-                                          0,Img.shape[0]-1)
+                                          0,Img.shape[0]-2)
         for i in range ( Img.shape[1]):
-             Img[int(path1[i]),i,:]=[254,0,0]
-             Img[int(path2[i]),i,:]=[0,254,0]
-             Img[int(path3[i]),i,:]=[0,0,254]
-             Img[int(path4[i]),i,:]=[0,0,0]
+             Img[int(path1[i])+1,i,:]=Img[int(path1[i]),i,:]=[254,0,0]
+             Img[int(path2[i])+1,i,:]=Img[int(path2[i]),i,:]=[0,254,0]
+             Img[int(path3[i])+1,i,:]=Img[int(path3[i]),i,:]=[0,0,254]
+             Img[int(path4[i])+1,i,:]=Img[int(path4[i]),i,:]=[0,0,0]
 
 
         if self.display_flag == True:

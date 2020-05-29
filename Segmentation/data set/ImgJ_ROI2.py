@@ -16,8 +16,10 @@ class  Read_read_check_ROI_label(object):
     def __init__(self ):
         #self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL-BACKSIDE-center/"
         #self.roi_dir =  "../../OCT/beam_scanning/Data set/seg label/NORMAL-BACKSIDE-center/"
-        self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
+        #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL-BACKSIDE-center/"
+        self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL-BACKSIDE/"
+
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
 
         self.image_dir   = self.database_root + "pic/"
@@ -47,7 +49,9 @@ class  Read_read_check_ROI_label(object):
                 dy = np.clip(vy[j],2,H-2)
                 dx = np.clip(vx[j],2,W-2)
 
-                img1[int(dy)+1,dx,:]=img1[int(dy)-1,dx,:]=img1[int(dy),dx,:]=painter
+                img1[int(dy)+1,dx,:]=img1[int(dy),dx,:]=painter
+                #img1[int(dy)+1,dx,:]=img1[int(dy)-1,dx,:]=img1[int(dy),dx,:]=painter
+
 
         return img1
     def check_one_folder (self):

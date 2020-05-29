@@ -6,8 +6,8 @@
 #operatedir_video =  "../../OCT/OCT aligment/22JAN2020AUTO_01.avi"
 #operatedir_video =  "../../OCT/OCT aligment/phantom-01_2412020121234.avi"
 #operatedir_video =  "../../OCT/new video/P-ID_Name_25092019164030.avi"
-operatedir_video =  "../../OCT/beam_scanning/NORMAL.avi"
-#operatedir_video =  "../../OCT/beam_scanning/NORMAL-BACKSIDE.avi"
+#operatedir_video =  "../../OCT/beam_scanning/NORMAL.avi"
+operatedir_video =  "../../OCT/beam_scanning/NORMAL-BACKSIDE.avi"
 #operatedir_video =  "../../OCT/beam_scanning/NORMAL-BACKSIDE.avi"
 #operatedir_video =  "../../OCT/beam_scanning/NORMAL-BACKSIDE-center.avi"
 
@@ -73,7 +73,7 @@ ret, frame = cap.read()
 if ret == True:
     H,W,_ = frame.shape
 H_start = 80
-H_end = H-0
+H_end = H-100
 W_start=200
 W_end=500
  

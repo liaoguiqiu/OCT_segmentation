@@ -15,10 +15,10 @@ from time import time
 from  path_finding import PATH
 from scipy.ndimage import gaussian_filter1d
 from Seg_one import Seg_One_Frame
- 
 class Seg_sequence(object):
      def __init__(self):
-         
+
+        self. process_start = 200
         self.operate_dir =   "../../saved_original_for_seg/"
         self.savedir_path = "../../saved_processed_seg/"
         self.savedir_path2 = "../../saved_processed_seg2/"
@@ -72,7 +72,7 @@ class Seg_sequence(object):
         for sequence_num in range(seqence_Len):
         #for i in os.listdir("E:/estimagine/vs_project/PythonApplication_data_au/pic/"):
                 #start from 500
-                real_num = sequence_num+500
+                real_num = sequence_num+self.process_start
                 img_path = self.operate_dir + str(real_num)+ ".jpg" # starting from 10
                 Img = cv2.imread(img_path)
                 SegImg,Sob,Image_with_bonud,Boundaries = self.fram_seger.seg_process(Img)
