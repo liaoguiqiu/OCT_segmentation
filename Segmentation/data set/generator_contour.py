@@ -100,6 +100,8 @@ class Generator_Contour(object):
                 # draw this original contour 
                 display = Basic_Operator.draw_coordinates_color(img_or,contour0x,contour0y,1)
                 cv2.imshow('origin',display.astype(np.uint8))
+                cv2.waitKey(10)   
+
         pass
     #display the the contour  gray 
     def display_contour(self,img,contourx,contoury,title):
@@ -158,7 +160,7 @@ class Generator_Contour(object):
         file_len = len(self.origin_data.img_num)
         #for num  in  self.origin_data.img_num:
         img_id =1
-        while(1):
+        for n in range(250):
             for num in range(file_len):
                 name = self.origin_data.img_num[num]
                 img_path = self.database_root + "pic/" + name + ".jpg"
@@ -190,6 +192,8 @@ class Generator_Contour(object):
                 #warp the contour 
                 patch = Basic_Operator .generate_patch_with_contour(img1,H_new,contour0x,contour0y,
                                                      new_contourx,new_contoury)
+                #patch = Basic_Operator .generate_patch_base_origin(img1,H_new,contour0x,contour0y,
+                #                                     new_contourx,new_contoury)
                 new_image=np.append(patch_l,patch,axis=1) 
                 new_image=np.append(new_image,patch_r,axis=1) 
                 #new_image =new_image*0.8
@@ -216,9 +220,10 @@ class Generator_Contour(object):
 
 if __name__ == '__main__':
     generator  = Generator_Contour()
+    generator.generate()
+
     generator.check()
 
-    #generator.generate()
     #back = generator.generate_background_image1(3,1024,1024)
     #cv2.imshow('origin',back.astype(np.uint8))
     cv2.waitKey(10) 

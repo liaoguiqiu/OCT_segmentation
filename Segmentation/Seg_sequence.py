@@ -23,8 +23,13 @@ class Seg_sequence(object):
         self.savedir_path = "../../saved_processed_seg/"
         self.savedir_path2 = "../../saved_processed_seg2/"
         self.savedir_path3 = "../../saved_processed_seg3/"
+        self.savedir_path3_unflat = "../../saved_processed_seg3_unflat/"
+
         self.savedir_path4 = "../../saved_processed_seg4/"
         self.savedir_flat = "../../saved_processed_seg_flat_origin/"
+        self.savedir_unflat = "../../saved_processed_seg_unflat/"
+
+         
         #saved_processed_thickness
         self.savedir_thick = "../../saved_processed_thickness/"
 
@@ -69,7 +74,7 @@ class Seg_sequence(object):
         save_sequence_num = 0  # processing iteration initial 
  
  
-        for sequence_num in range(seqence_Len):
+        for sequence_num in range(300):
         #for i in os.listdir("E:/estimagine/vs_project/PythonApplication_data_au/pic/"):
                 #start from 500
                 real_num = sequence_num+self.process_start
@@ -87,6 +92,14 @@ class Seg_sequence(object):
                 self.thickness2.append(depth2)
                 self.thickness3.append(depth3)
                 self.path1.append(path1)
+
+
+                img_unflat = Img
+                bound_unflat = Image_with_bonud
+                cv2.imwrite(self.savedir_unflat  + str(real_num) +".jpg", img_unflat)
+                cv2.imwrite(self.savedir_path3_unflat  + str(real_num) +".jpg", bound_unflat)
+
+
                 if self.Aligh_flag == True:
                     cali_shift = -int(path1mean - self.path1_mean[0])
                     Sob = np.roll(Sob, cali_shift, axis = 0)
@@ -107,6 +120,7 @@ class Seg_sequence(object):
                 cv2.imwrite(self.savedir_path2  + str(real_num) +".jpg", Sob)
 
                 cv2.imwrite(self.savedir_path3  + str(real_num) +".jpg", Image_with_bonud)
+
                 if sequence_num>3:
                     # change the list to imag array
                     H1  = len(self.thickness1)

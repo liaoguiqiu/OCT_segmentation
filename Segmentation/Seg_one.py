@@ -178,6 +178,10 @@ class Seg_One_Frame(object):
         path4=path3
         #path2 = path3
         path3 = path2+35
+        path2 = path2 - 5
+        path3,path_cost1=PATH.search_a_path_based_on_path(Rever_img,path3)
+        path3 =gaussian_filter1d(path3,4)
+
 
         [path1,path2,path3,path4]=np.clip([path1,path2,path3,path4],
                                           0,sobel_y.shape[0]-1)
