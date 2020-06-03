@@ -40,6 +40,10 @@ class Basic_Operator:
             pass
         else:
             pass
+        Dice = int( np.random.random_sample()*10)
+        if Dice % 2 ==0 :
+            newy = y
+            newx = x
         #width  = 30% - % 50
 
 
@@ -139,15 +143,16 @@ class Basic_Operator:
         points_new = len(new_contoury)
         W_new  = points_new
         original_patch  =  img1[:,contour0x[0]:contour0x[points-1]]
-        original_patch  =  cv2.resize(img1, (points_new,H_new), interpolation=cv2.INTER_AREA)
+        original_patch  =  cv2.resize(original_patch, (points_new,H_new), interpolation=cv2.INTER_AREA)
         contour0y=signal.resample(contour0y, W_new)
         img1 = cv2.resize(img1, (W,H_new), interpolation=cv2.INTER_AREA)
+        
 
         new  = np.zeros((H_new,W_new))
         for i in range(W_new):
             #line_it = int( np.random.random_sample()*points)
             #line_it = np.clip(line_it,0,points-1) 
-            source_line = img1[:,i]
+            source_line = original_patch[:,i]
             #new[:,i] = ba.warp_padding_line1(source_line, contour0y[line_it],new_contoury[i])
             new[:,i] = Basic_Operator .warp_padding_line2(source_line, contour0y[i],new_contoury[i])
             #random select a source

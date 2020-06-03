@@ -160,7 +160,7 @@ class Generator_Contour(object):
         file_len = len(self.origin_data.img_num)
         #for num  in  self.origin_data.img_num:
         img_id =1
-        for n in range(250):
+        for n in range(1000):
             for num in range(file_len):
                 name = self.origin_data.img_num[num]
                 img_path = self.database_root + "pic/" + name + ".jpg"
@@ -190,10 +190,15 @@ class Generator_Contour(object):
 
                 #patch_r = generator.generate_background_image1(1,H_new,W_new -new_contourx[num_points-1])
                 #warp the contour 
-                patch = Basic_Operator .generate_patch_with_contour(img1,H_new,contour0x,contour0y,
+                Dice = int( np.random.random_sample()*10)
+                if Dice % 2 ==0 :
+                    patch = Basic_Operator .generate_patch_with_contour(img1,H_new,contour0x,contour0y,
                                                      new_contourx,new_contoury)
-                #patch = Basic_Operator .generate_patch_base_origin(img1,H_new,contour0x,contour0y,
-                #                                     new_contourx,new_contoury)
+                else:
+                    patch = Basic_Operator .generate_patch_base_origin(img1,H_new,contour0x,contour0y,
+                                                     new_contourx,new_contoury)
+                
+                
                 new_image=np.append(patch_l,patch,axis=1) 
                 new_image=np.append(new_image,patch_r,axis=1) 
                 #new_image =new_image*0.8
