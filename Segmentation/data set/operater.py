@@ -13,7 +13,6 @@ class Basic_Operator:
         # first need to determine whether use the origina lcountour to shift 
         dc1 =np.random.random_sample()*10
         dc1  = int(dc1)%2
-        dc1=0
         if dc1==0: # use the original signal 
             # inital ramdon width and height
             width =  int((0.3+0.5* np.random.random_sample())*W)
@@ -23,25 +22,18 @@ class Basic_Operator:
             dy1 = int(  np.random.random_sample()*(H-height) )
             dx2  = dx1+width
             dy2  = dy1+height
-
             #new x
             newx = np.arange(dx1, dx2)
-
             #new y based on a given original y
             newy=signal.resample(y, width)
-            r_vector   = np.random.sample(20)*20
+            r_vector   = np.random.sample(20)*50
             r_vector=signal.resample(r_vector, width)
             r_vector = gaussian_filter1d (r_vector ,10)
             newy = newy + r_vector
             miny=min(newy)
             height0  = max(newy)-miny
             newy = (newy-miny) *height/height0 + dy1 
-
-            pass
-        else:
-            pass
-        Dice = int( np.random.random_sample()*10)
-        if Dice % 2 ==0 :
+        else:       
             newy = y
             newx = x
         #width  = 30% - % 50
