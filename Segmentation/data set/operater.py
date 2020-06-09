@@ -7,7 +7,94 @@ import scipy.signal as signal
 from scipy.ndimage import gaussian_filter1d
 
 class Basic_Operator:
+    def add_noise_or_not(img):
+        noise_selector=['none','s&p','gauss_noise','speckle']
+        noise_it = np.random.random_sample()*5
+        noise_type1  =  str( noise_selector[int(noise_it)%4])  
+        img  =  Basic_Operator.noisy(noise_type1,img)
+        return img
 
+    def noisy(noise_typ,image):
+           if noise_typ == "none":
+              return image
+           if noise_typ == "gauss_noise":
+              row,col = image.shape
+              mean = 0
+              var = 50
+              sigma = var**0.5
+              gauss = np.random.normal(mean,sigma,(row,col )) 
+              gauss = gauss.reshape(row,col ) 
+              noisy = image + gauss
+              return np.clip(noisy,0,254)
+           elif noise_typ == 's&p':
+              row,col  = image.shape
+              s_vs_p = 0.5
+              amount = 0.004
+              out = np.copy(image)
+              # Salt mode
+              num_salt = np.ceil(amount * image.size * s_vs_p)
+              coords = [np.random.randint(0, i - 1, int(num_salt))
+                      for i in image.shape]
+              out[coords] = 1
+
+              # Pepper mode
+              num_pepper = np.ceil(amount* image.size * (1. - s_vs_p))
+              coords = [np.random.randint(0, i - 1, int(num_pepper))
+                      for i in image.shape]
+              out[coords] = 0
+              return np.clip(out,0,254)
+           elif noise_typ == 'poisson':
+              vals = len(np.unique(image))
+              vals = 2 ** np.ceil(np.log2(vals))
+              noisy = np.random.poisson(image * vals) / float(vals)
+              return np.clip(noisy,0,254)
+           elif noise_typ =='speckle':
+              row,col  = image.shape
+              gauss = np.random.randn(row,col )
+              gauss = gauss.reshape(row,col )        
+              noisy = image + image * gauss
+              return np.clip(noisy,0,254)
+
+    def ramdom_speckle(img):
+        H,W = img.shape 
+        mask = np.zeros((H,W))
+        pos_vec = np.random.sample(20)*W
+        for pos in  pos_vec:
+            max = np.random.random_sample()*50+180
+            min = 0
+            endpoint = int(np.random.random_sample() * H)
+            line = np.linspace(max, min, num=endpoint)
+            mask[0:endpoint,int(pos)] = line
+        #smooth the mask 
+        mask =  cv2.blur(mask,(5,5))
+        img = img + mask
+        return img
+    def add_speckle_or_not (img):
+        Dice = int( np.random.random_sample()*10)
+        if Dice % 2 ==0 :
+            return img
+        else:
+            return Basic_Operator.ramdom_speckle(img)
+    def ramdom_gap(img):
+        H,W = img.shape 
+        mask = np.ones((H,W))
+        pos_vec = np.random.sample(20)*W
+        for pos in  pos_vec:
+            #max = np.random.random_sample()*50+180
+            #min = 0
+            #endpoint = int(np.random.random_sample() * H)
+            #line = np.linspace(max, min, num=endpoint)
+            mask[:,int(pos)] *= 0
+        #smooth the mask 
+        mask =  cv2.blur(mask,(3,3))
+        img = np.multiply(img,mask)
+        return img
+    def add_gap_or_not (img):
+        Dice = int( np.random.random_sample()*10)
+        if Dice % 2 ==0 :
+            return img
+        else:
+            return Basic_Operator.ramdom_gap(img)
         # use the H and W of origina to confine , and generate a random reseanable signal in the window
     def random_shape_contour(H,W,x,y):
         # first need to determine whether use the origina lcountour to shift 
@@ -173,22 +260,31 @@ class Basic_Operator:
         return lv
     # to generate synthetic background with this image with label 
     def generate_background_image2(img,contourx,contoury,H,W):
-        
+        ori_H,ori_W  = img.shape
         points = len(contourx)
         new  = np.zeros((H,W))
-        #generate line by line 
-        for i in range(W):
-            #random select a source
+        c_len = len(contourx)
+        Dice = int( np.random.random_sample()*10)
+        #method 1 just use the left and right side of the imag to raasampel
+        if Dice % 2 ==0 and c_len<0.6* ori_W:
+            sourimg1  = img[:,0:contourx[0]]
+            sourimg2  = img[:,contourx[c_len-2]: ori_W]
+            sourimg = np.append(sourimg1,sourimg2,axis =1)
+            new  = cv2.resize(sourimg, (W,H), interpolation=cv2.INTER_AREA)
+        else:
+            #method 2 the line is generated with the line above the the contour 
+            #generate line by line 
+            for i in range(W):
+                #random select a source
  
-            #random select a A-line
-            line_it = int( np.random.random_sample()*points)
-            line_it = np.clip(line_it,0,points-1) 
-            y = contoury[line_it]
-            #pick part of the A-line betwenn contour and scanning center
-            source_line = img[int(0.3*y):int(0.6*y),contourx[line_it]]
+                #random select a A-line
+                line_it = int( np.random.random_sample()*points)
+                line_it = np.clip(line_it,0,points-1) 
+                y = contoury[line_it]
+                #pick part of the A-line betwenn contour and scanning center
+                source_line = img[int(0.3*y):int(0.6*y),contourx[line_it]]
 
-            #source_h  = h_list[pic_it]
-            #new[:,i] = self.fill_lv_with_sv1(source_line,H)
-            new[:,i] =  Basic_Operator .fill_lv_with_sv1(source_line,H)
-
+                #source_h  = h_list[pic_it]
+                #new[:,i] = self.fill_lv_with_sv1(source_line,H)
+                new[:,i] =  Basic_Operator .fill_lv_with_sv1(source_line,H)
         return new

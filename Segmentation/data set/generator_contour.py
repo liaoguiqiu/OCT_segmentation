@@ -185,8 +185,8 @@ class Generator_Contour(object):
 
                 num_points = len(new_contourx)
                 #patch_l = generator.generate_background_image1(1,H_new,new_contourx[0])
-                patch_l = Basic_Operator .generate_background_image2(img1,contour0x,contour0y,H_new,new_contourx[0])
-                patch_r = Basic_Operator .generate_background_image2(img1,contour0x,contour0y,H_new,W_new -new_contourx[num_points-1])
+                patch_l = Basic_Operator .generate_background_image2(img1,contour0x,contour0y,H_new,np.clip(new_contourx[0],1,W_new))
+                patch_r = Basic_Operator .generate_background_image2(img1,contour0x,contour0y,H_new,np.clip(W_new -new_contourx[num_points-1],1,W_new))
 
                 #patch_r = generator.generate_background_image1(1,H_new,W_new -new_contourx[num_points-1])
                 #warp the contour 
@@ -197,10 +197,14 @@ class Generator_Contour(object):
                 else:
                     patch = Basic_Operator .generate_patch_base_origin(img1,H_new,contour0x,contour0y,
                                                      new_contourx,new_contoury)
-                
-                
+                #speckle 
+                patch= Basic_Operator.add_speckle_or_not(patch)
+                patch = Basic_Operator.add_gap_or_not(patch)
+
                 new_image=np.append(patch_l,patch,axis=1) 
                 new_image=np.append(new_image,patch_r,axis=1) 
+
+                new_image = Basic_Operator.add_noise_or_not(new_image) # noise
                 #new_image =new_image*0.8
                 cv2.imshow('w1',new_image.astype(np.uint8))
 
