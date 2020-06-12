@@ -1,30 +1,39 @@
 import cv2
-import math
 import numpy as np
 import os
 import random
 from matplotlib.pyplot import *
 #from mpl_toolkits.mplot3d import Axes3D
-from median_filter_special import  myfilter
-from cost_matrix import  COSTMtrix
-from scipy.ndimage import gaussian_filter1d
 
 #PythonETpackage for xml file edition
-try: 
-    import xml.etree.cElementTree as ET 
-except ImportError: 
-    import xml.etree.ElementTree as ET 
-import sys 
-#GPU acceleration
-from cost_matrix import Window_LEN
-from analy_visdom import VisdomLinePlotter
-#from numba import vectorize
-#from numba import jit
+ 
 import pickle
-from enum import Enum
-import scipy.signal as signal
 from operater import Basic_Operator
-import math
+class Communicate(object):
+    def __init__(self ):
+        #set = Read_read_check_ROI_label()
+        #self.database_root = set.database_root
+        #check or create this path
+        #self.self_check_path_create(self.signal_data_path)
+        self.training= 1
+        self.writing = 2
+        self.pending = 0
+    def change_state(self):
+        if self.writing ==1:
+           self.writing =0
+        pass
+    def read_data(self,dir):
+        saved_path  = dir  + 'protocol.pkl'
+        self = pickle.load(open(saved_path,'rb'),encoding='iso-8859-1')
+        return self
+    def save_data(self,dir):
+        #save the data 
+        save_path = dir + 'protocol.pkl'
+        with open(save_path , 'wb') as f:
+            pickle.dump(self , f, pickle.HIGHEST_PROTOCOL)
+        pass
+
+
 #from ImgJ_ROI2 import Read_read_check_ROI_label
 class Save_Contour_pkl(object):
     def __init__(self ):
@@ -60,6 +69,7 @@ class Save_Contour_pkl(object):
 
 class Generator_Contour(object):
     def __init__(self ):
+        self.OLG_flag =False
         self.origin_data = Save_Contour_pkl()
         self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
         #self.database_root ="../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
@@ -160,7 +170,7 @@ class Generator_Contour(object):
         file_len = len(self.origin_data.img_num)
         #for num  in  self.origin_data.img_num:
         img_id =1
-        for n in range(1000):
+        for n in range(50):
             for num in range(file_len):
                 name = self.origin_data.img_num[num]
                 img_path = self.database_root + "pic/" + name + ".jpg"
@@ -229,8 +239,27 @@ class Generator_Contour(object):
 
 if __name__ == '__main__':
     generator  = Generator_Contour()
-    generator.generate()
+    if generator.OLG_flag ==True:
+        talker = Communicate()
+        com_dir = "../../../../../" + "Deep learning/dataset/telecom/"
+        talker=talker.read_data(com_dir)
+        #generator.save_img_dir = "../../../../../"  + "Deep learning/dataset/"
+        #generator.save_contour_dir = "../../"     + "saved_stastics_coutour_generated/"
 
+        imgbase_dir = "../../../../../"  + "Deep learning/dataset/For_contour_train/pic/"
+        labelbase_dir = "../../../../../"  + "Deep learning/dataset/For_contour_train/label/"
+
+        while(1):
+            if talker.training==1: # check if 2 need writing
+                if talker.pending == 0 :
+                       generator.generate()
+
+
+
+
+    
+    generator.generate()
+    
     generator.check()
 
     #back = generator.generate_background_image1(3,1024,1024)
