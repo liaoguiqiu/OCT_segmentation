@@ -17,7 +17,7 @@ class Communicate(object):
         #self.self_check_path_create(self.signal_data_path)
         self.training= 1
         self.writing = 2
-        self.pending = 0
+        self.pending = 1
     def change_state(self):
         if self.writing ==1:
            self.writing =0
@@ -69,7 +69,7 @@ class Save_Contour_pkl(object):
 
 class Generator_Contour(object):
     def __init__(self ):
-        self.OLG_flag =False
+        self.OLG_flag =True
         self.origin_data = Save_Contour_pkl()
         self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
         #self.database_root ="../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
@@ -242,7 +242,12 @@ if __name__ == '__main__':
     if generator.OLG_flag ==True:
         talker = Communicate()
         com_dir = "../../../../../" + "Deep learning/dataset/telecom/"
+
         talker=talker.read_data(com_dir)
+        #initialize the protocol
+        #talker.pending = 1
+        #talker=talker.save_data(com_dir)
+
         #generator.save_img_dir = "../../../../../"  + "Deep learning/dataset/"
         #generator.save_contour_dir = "../../"     + "saved_stastics_coutour_generated/"
 
@@ -250,10 +255,32 @@ if __name__ == '__main__':
         labelbase_dir = "../../../../../"  + "Deep learning/dataset/For_contour_train/label/"
 
         while(1):
-            if talker.training==1: # check if 2 need writing
-                if talker.pending == 0 :
-                       generator.generate()
+            generator  = Generator_Contour()
 
+            talker=talker.read_data(com_dir)
+
+            if talker.training==1 and talker.writing==2: # check if 2 need writing
+                if talker.pending == 0 :
+                    generator.save_img_dir = imgbase_dir+"2/"
+                    generator.save_contour_dir =  labelbase_dir+"2/"
+
+                    generator.generate() # generate
+
+                    talker.writing=1
+                    talker.pending=1
+                    talker.save_data(com_dir)
+            if talker.training==2 and talker.writing==1: # check if 2 need writing
+                if talker.pending == 0 :
+                    generator.save_img_dir = imgbase_dir+"1/"
+                    generator.save_contour_dir =  labelbase_dir+"1/"
+
+                    generator.generate() # generate
+
+                    talker.writing=2
+                    talker.pending=1
+                    talker.save_data(com_dir)
+            cv2.waitKey(1000)   
+            print("waiting")
 
 
 
