@@ -98,13 +98,13 @@ class Basic_Operator:
     def ramdom_speckle(img):
         H,W = img.shape 
         mask = np.zeros((H,W))
-        pos_vec = np.random.sample(20)*W
+        pos_vec =  (np.random.sample(20)*0.8+0.1)*W
         for pos in  pos_vec:
-            max = np.random.random_sample()*50+180
+            max = np.random.random_sample()*100+150
             min = 0
             endpoint = int(np.random.random_sample() * H)
             line = np.linspace(max, min, num=endpoint)
-            mask[0:endpoint,int(pos)] = line
+            mask[0:endpoint,int(pos)]=mask[0:endpoint,int(pos+1)]  = line
         #smooth the mask 
         mask =  cv2.blur(mask,(5,5))
         img = img + mask
@@ -118,15 +118,19 @@ class Basic_Operator:
     def ramdom_gap(img):
         H,W = img.shape 
         mask = np.ones((H,W))
-        pos_vec = np.random.sample(20)*W
+        pos_vec = (np.random.sample(20)*0.8+0.1)*W
         for pos in  pos_vec:
             #max = np.random.random_sample()*50+180
             #min = 0
             #endpoint = int(np.random.random_sample() * H)
             #line = np.linspace(max, min, num=endpoint)
             mask[:,int(pos)] *= 0
+            mask[:,int(pos+1)] *= 0
+            mask[:,int(pos-1)] *= 0
+
+
         #smooth the mask 
-        mask =  cv2.blur(mask,(3,3))
+        mask =  cv2.blur(mask,(5,5))
         img = np.multiply(img,mask)
         return img
     def add_gap_or_not (img):
