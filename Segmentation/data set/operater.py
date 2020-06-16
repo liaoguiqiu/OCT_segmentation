@@ -14,13 +14,15 @@ class Basic_Operator:
         dc1  = int(dc1)%2
         if dc1==0: # use the original signal 
             # inital ramdon width and height
+           
             width =  int((0.05+0.91* np.random.random_sample())*W)
-            height =  int((0.05+0.91* np.random.random_sample())*H)
-            # star and end
             dx1 = int(  np.random.random_sample()*(W-width)  )
-            dy1 = int(  np.random.random_sample()*(H-height) )
             dx2  = dx1+width
-            dy2  = dy1+height
+            dy1 = int(  np.random.random_sample()*H*1.5 -0.25*H)
+            dy2  = int  ( np.random.random_sample()*(H*1.5-dy1)) + dy1
+
+            height =  dy2-dy1
+            # star and end
             #new x
             newx = np.arange(dx1, dx2)
             #new y based on a given original y
@@ -32,6 +34,7 @@ class Basic_Operator:
             miny=min(newy)
             height0  = max(newy)-miny
             newy = (newy-miny) *height/height0 + dy1 
+            newy = np.clip(newy,0,H-1)
         else:       
             newy = y
             newx = x
