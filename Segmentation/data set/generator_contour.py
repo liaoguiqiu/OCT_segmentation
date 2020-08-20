@@ -69,7 +69,7 @@ class Save_Contour_pkl(object):
 
 class Generator_Contour(object):
     def __init__(self ):
-        self.OLG_flag =False
+        self.OLG_flag =True
         self.origin_data = Save_Contour_pkl()
         self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
         #self.database_root ="../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
