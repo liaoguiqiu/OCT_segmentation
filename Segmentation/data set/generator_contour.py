@@ -35,6 +35,7 @@ class Communicate(object):
 
 
 #from ImgJ_ROI2 import Read_read_check_ROI_label
+#for this function this is to save the laeyrers
 class Save_Contour_pkl(object):
     def __init__(self ):
         #set = Read_read_check_ROI_label()
@@ -71,8 +72,8 @@ class Generator_Contour(object):
     def __init__(self ):
         self.OLG_flag =True
         self.origin_data = Save_Contour_pkl()
-        self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
-        #self.database_root ="../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
+        #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
+        self.database_root ="../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
         self.origin_data =self.origin_data.read_data(self.database_root)
         self.back_ground_root  =  "../../"     + "saved_background_for_generator/"
 
