@@ -8,6 +8,37 @@ from scipy.ndimage import gaussian_filter1d
 
 class Basic_Operator:
     # use the H and W of origina to confine , and generate a random reseanable signal in the window
+    def random_shaped_layer (H,W):
+        # currently use 4 bondaries
+        contoursx=[None]*4
+        contoursy=[None]*4
+        contoursx[0]   = contoursx[1] = contoursx[2] = contoursx[3] = np.arange(0, W)
+        dy1 = 0.1*H
+        dy2  = 0.3*H
+        for i in range(4):
+            # randon contour 
+            dy_this1  = dy1  + 0.2*i*H
+            dy_this2  = dy2  + 0.2*i*H
+            # scale to avoisd the contact beteen 2  bondaties
+            dy_this1 = dy_this1*0.8
+            dy_this2 = dy_this2*0.8
+
+            r_vector   = np.random.sample(20)*50
+            r_vector=signal.resample(r_vector, W)
+            r_vector = gaussian_filter1d (r_vector ,10)
+
+
+            newy =  r_vector
+            miny=min(newy)
+            height =  dy_this2-dy_this1
+            height0  = max(newy)-miny
+            newy = (newy-miny) *height/height0 + dy_this1 
+            contoursy[i] = newy
+            pass
+
+        pass
+        return  contoursx, contoursy
+
     def random_shape_contour(H,W,x,y):
         # first need to determine whether use the origina lcountour to shift 
         dc1 =np.random.random_sample()*10
