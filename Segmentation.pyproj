@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d973a49b-def9-479d-848b-defa787b9be9}</ProjectGuid>
     <ProjectHome>Segmentation\</ProjectHome>
-    <StartupFile>data set\generator_layers.py</StartupFile>
+    <StartupFile>RC_one.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -69,6 +69,12 @@
     <Compile Include="DeepPathsearch\path_train.py" />
     <Compile Include="DeepPathsearch\testDataReading.py" />
     <Compile Include="DeepPathsearch\test_Deep_finding.py" />
+    <Compile Include="RC_functionpy.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RC_one.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Read_video.py" />
     <Compile Include="display.py" />
     <Compile Include="median_filter_special.py" />

@@ -8,6 +8,8 @@
 #operatedir_video =  "../../OCT/new video/P-ID_Name_25092019164030.avi"
 #operatedir_video =  "../../OCT/beam_scanning/NORMAL.avi"
 operatedir_video =  "../../OCT/beam_scanning/NORMAL-BACKSIDE.avi"
+operatedir_video =  "../../OCT/beam_scanning/colon/P-ID_Name_26112018152100.avi"
+
 #operatedir_video =  "../../OCT/beam_scanning/NORMAL-BACKSIDE.avi"
 #operatedir_video =  "../../OCT/beam_scanning/NORMAL-BACKSIDE-center.avi"
 
