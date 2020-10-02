@@ -47,10 +47,10 @@ class PATH:
 
             last_p = min (last_p,h-1)
             #detemin search region
-            k0=last_p-10;
+            k0=last_p-20;
             if(k0<0):
               k0=0
-            k1=last_p+10;
+            k1=last_p+20;
             if(k1>h-1):
               k1=h-1
             # find the min point

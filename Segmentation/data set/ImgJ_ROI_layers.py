@@ -1,3 +1,5 @@
+
+# upate in the september, 2020
 # this allow each contour has different lenth and different start x and Y
 from read_roi import read_roi_file
 from read_roi import read_roi_zip

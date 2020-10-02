@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d973a49b-def9-479d-848b-defa787b9be9}</ProjectGuid>
     <ProjectHome>Segmentation\</ProjectHome>
-    <StartupFile>RC_one.py</StartupFile>
+    <StartupFile>data set\read_Jsonpy.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -51,6 +51,9 @@
     <Compile Include="data set\post_process.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="data set\read_Jsonpy.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Dataset_augmentor.py" />
     <Compile Include="Dataset_generator.py" />
     <Compile Include="DeepPathsearch\analy.py" />
@@ -73,6 +76,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RC_one.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RC_video1.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RC_video2.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RC_video3.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Read_video.py" />

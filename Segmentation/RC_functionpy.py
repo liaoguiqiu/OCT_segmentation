@@ -19,9 +19,19 @@ class RC_function(object):
      #formulars
      #n1* sin(that1)   = n2 sin (the) 
      def __init__(self):
-         self.n  = 1.7  # refraction index between air and material 
+         self.n  = 1.4 # refraction index between air and material 
          self.HV  = 20# the ratio between horizontal and vertical 
          self.pi = 3.14159
+         # flat the image with the furface   of the health surface 
+     def  flatten (self, img, surface):
+        #remove the surface bias
+        H,W = img.shape
+        new  =img
+        roller   = surface -  min (surface)
+        roller   = signal.resample(roller , W)   
+        for iter  in range(W):
+            new[:,iter] =np.roll( img[:,iter] ,-int(roller[iter]))
+        return new
      def fill_up_contour(self,new,mask,img,contour):
         H,W = img.shape
         for i in range(W):
@@ -73,8 +83,12 @@ class RC_function(object):
                  #if j > contour[i]: 
                      d = j- contour[i]
                      y_t  = d/self.n*cos2[i] + contour[i]
+                     #y_t  = d/self.n  + contour[i]
+
                      y_t = np.clip(y_t,0,H-1)
-                     x_t=   d*sin2[i]  + i
+                     #x_t=   d*sin2[i]  + i
+                     x_t=   d/self.n*sin2[i]  + i
+
                      x_t = np.clip(x_t,0,W-1)
 
                      new[int(y_t),int(x_t)] = img[j,i]

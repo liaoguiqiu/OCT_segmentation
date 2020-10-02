@@ -1,7 +1,7 @@
 # refraction distortion correction  one 
 
 #operatedir_one  = "../../saved_original_for_refraction/image450.jpg"
-reference_dir   =  "../../saved_original_for_refraction/1/image35.jpg"
+reference_dir   =  "../../saved_original_for_refraction/image161.jpg"
 from analy import Save_signal_flag
 import cv2
 import math
@@ -23,11 +23,11 @@ from  RC_functionpy import RC_function
 class Seg_One_Frame(object):
      def __init__(self):
          
-        #self.operate_dir =   "../../saved_original_for_refraction/image433.jpg"
-        self.operate_dir =   "D:/PhD/IPB meeting/natalia paper/fractional correction/Bscan/original/Pedun-02-topview-cscan10-bscan15 -aver4 fr110.tif"
+        self.operate_dir =   "../../saved_original_for_refraction/1/"
+        #self.operate_dir =   "D:/PhD/IPB meeting/natalia paper/fractional correction/Bscan/original/cancer-CSCAN15-BSCAN15-spaing10um-02.jpg"
 
-        self.savedir_path = "../../saved_processed/"
-        self.savedir_path = "D:/PhD/IPB meeting/natalia paper/fractional correction/Bscan/correct/Pedun-02-topview-cscan10-bscan15 -aver4 fr110.tif"
+        self.savedir_path = "../../saved_processed/1/"
+        #self.savedir_path = "D:/PhD/IPB meeting/natalia paper/fractional correction/Bscan/correct/hyper-bottom.jpg"
 
         self.display_flag = True
         from A_line import A_line_process
@@ -158,9 +158,9 @@ class Seg_One_Frame(object):
         #sobel_y=sobel_y[self.bias:H-self.bias, :]
         #Img=Img[self.bias:H-self.bias, :]
 
-        ave_line = self.calculate_the_average_line(sobel_y )
+        ave_line = self.calculate_the_average_line(sobel_y)
         peaks  = self.aline.find_4peak(ave_line) 
-        #peaks  = peaks    + self.bias
+
         Rever_img  = 255 - sobel_y
         
         
@@ -202,7 +202,7 @@ class Seg_One_Frame(object):
              
         Dark_boundaries =  sobel_y *0
         path1=np.clip(path1,
-                                          0,Dark_boundaries.shape[0]-50)
+                                          0,Dark_boundaries.shape[0]-2)
         for i in range ( len(path1)):
              Dark_boundaries[int(path1[i]),i]=254
             
@@ -216,9 +216,9 @@ class Seg_One_Frame(object):
              
 
         # corect tje RC
-        #original    =    cv2.resize(original, (int(W/1),int(H/1)), interpolation=cv2.INTER_LINEAR)
+        #original    =    cv2.resize(original, (int(W/2),int(H/2)), interpolation=cv2.INTER_LINEAR)
 
-        new  = self.rc_corrector.correct(original,path1+50)
+        new  = self.rc_corrector.correct(original,path1)
 
 
 
@@ -433,46 +433,67 @@ class Seg_One_Frame(object):
             cv2.waitKey(1) 
  
         return     path1
-        
-if __name__ == '__main__':
-    
+def roll_all_images():
     frame_process  = Seg_One_Frame()
+
+    for iter  in range(350,979):
+        IMG_DIR  =  frame_process.savedir_path + str(iter)+".jpg"
+        Img = cv2.imread(IMG_DIR)  #read the first one to get the image size
+        Img  =   cv2.cvtColor(Img, cv2.COLOR_BGR2GRAY)
+        cv2.imshow('origin',Img.astype(np.uint8))
+         
+        Img2 = np.roll(Img, 30, axis =0)  
+        cv2.imshow('rool',Img2.astype(np.uint8))
+         
+
+        cv2.imwrite(frame_process.savedir_path + str(iter) +".jpg"   ,Img2 .astype(np.uint8))
+    
+        cv2.waitKey(1) 
+
+if __name__ == '__main__':
+    roll_all_images()
+
+
+    frame_process  = Seg_One_Frame()
+    reference_dir =  frame_process.operate_dir  + "image242.jpg"
     reference   =  cv2.imread(reference_dir)
     reference  =   cv2.cvtColor(reference, cv2.COLOR_BGR2GRAY)
     H,W   = reference.shape
-    left  = 1
+    left  = 130
     right  = W
-    top =1
+    top =30
     bottom=H
     reference2 = reference[top:bottom,left:right]
+    H,W   = reference.shape
+
     #cv2.imwrite(self.savedir_path   ,sobel_y .astype(np.uint8))
+    reference2    =    cv2.resize(reference2, (int(W/3),int(H/3)), interpolation=cv2.INTER_LINEAR)
     r_contour   =  frame_process.reference(reference2)
 
-    Img = cv2.imread(frame_process.operate_dir)  #read the first one to get the image size
-    Img  =   cv2.cvtColor(Img, cv2.COLOR_BGR2GRAY)
-    final =Img
-    H,W   = Img.shape
-    left  = int(354)
-    right  =  int(1090)
-    top =1
-    bottom=H
-    Img2  = Img[top:bottom,left:right]
-    imgl = Img[top:bottom,0:left]
-    imgr = Img[top:bottom,right:W]
 
+    for iter  in range(838,979):
 
-    Img2=frame_process.seg_process(Img2)
-    final[top:bottom,left:right] = Img2
-    #Img2  =  frame_process.rc_corrector.flatten(Img2,r_contour)
-    cv2.imshow('flaten',final.astype(np.uint8))
-            #cv2.imshow('correct',new.astype(np.uint8))
-
-            #cv2.imwrite(self.savedir_path  + str(1) +".jpg",sobel_y .astype(np.uint8))
+            IMG_DIR  =  frame_process.operate_dir + "image" + str(iter)+".jpg"
+            Img = cv2.imread(IMG_DIR)  #read the first one to get the image size
+            Img  =   cv2.cvtColor(Img, cv2.COLOR_BGR2GRAY)
+            Img2  = Img[top:bottom,left:right]
     
+            Img2    =    cv2.resize(Img2, (int(W/3),int(H/3)), interpolation=cv2.INTER_LINEAR)
 
-    cv2.imwrite(frame_process.savedir_path   ,final .astype(np.uint8))
+            Img2=frame_process.seg_process(Img2)
+            Img2  =  frame_process.rc_corrector.flatten(Img2,r_contour)
+            cv2.imshow('flaten',Img2.astype(np.uint8))
+                    #cv2.imshow('correct',new.astype(np.uint8))
+
+                    #cv2.imwrite(self.savedir_path  + str(1) +".jpg",sobel_y .astype(np.uint8))
+
+            cv2.imwrite(frame_process.savedir_path + str(iter) +".jpg"   ,Img2 .astype(np.uint8))
     
-    cv2.waitKey(1) 
+            cv2.waitKey(1) 
+
+
+
+   
 
 
 
