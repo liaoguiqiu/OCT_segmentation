@@ -30,6 +30,9 @@
     <Compile Include="data set\Aline_generator.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="data set\auto_json.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="data set\generator_contour.py">
       <SubType>Code</SubType>
     </Compile>
@@ -92,6 +95,9 @@
     <Compile Include="median_filter_special.py" />
     <Compile Include="path_finding.py" />
     <Compile Include="Seg_one.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="seg_one_1.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Seg_sequence.py">

@@ -151,25 +151,26 @@ class  Read_read_check_json_label(object):
 
 if __name__ == '__main__':
     #play with JSON gile 
-    file_dir   = "D:/Deep learning/dataset/label data/label/0.json"
+    #file_dir   = "D:/Deep learning/dataset/label data/label/0.json"
 
-    with open(file_dir) as f:
-        data = JSON.load(f)
-    # Output: {'name': 'Bob', 'languages': ['English', 'Fench']}
-    print(data)
-    shape  = data["shapes"]
-    print(shape)
-    num_line  = len(shape)
-    coordinate  = shape[0]["points"]
-    num_points  = len(coordinate)
-    for  i in range(num_points):
-        pass
-    print(coordinate)
-    ## modify the coordinate 
-
-    #save 
-    with open(file_dir, "w") as jsonFile:
-        json.dump(data, jsonFile)
+    #with open(file_dir) as f:
+    #    data = JSON.load(f)
+    ## Output: {'name': 'Bob', 'languages': ['English', 'Fench']}
+    #print(data)
+    #newdata   = data 
+    #shape  = data["shapes"]
+    #print(shape)
+    #num_line  = len(shape)
+    #coordinate  = shape[0]["points"]
+    #num_points  = len(coordinate)
+    #for  i in range(num_points):
+    #    coordinate[i][1] = 100
+    #print(coordinate)
+    ### modify the coordinate 
+    #newdata["shapes"][0]["points"]  = coordinate
+    ##save 
+    #with open(file_dir, "w") as jsonFile:
+    #    JSON.dump(newdata, jsonFile)
 
 
     cheker  = Read_read_check_json_label()
