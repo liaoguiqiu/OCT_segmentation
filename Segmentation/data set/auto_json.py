@@ -24,8 +24,9 @@ class  Auto_json_label(object):
         # read th jso fie in hte start :
         with open(jason_tmp_dir) as dir:
             self.jason_tmp = JSON.load(dir)
+        self.shapeTmp  = self.jason_tmp["shapes"]
         self.coordinates0 = self.jason_tmp["shapes"] [1]["points"] # remember add finding corred label 1!!!
-        self.co_len  = len (self.coordinates0) 
+        self.co_len = len (self.coordinates0) 
 
         self.database_root = "D:/Deep learning/dataset/label data/"
 
@@ -61,32 +62,59 @@ class  Auto_json_label(object):
 
         return img1
     def check_one_folder (self):
-        for i in os.listdir(self.image_dir): # star from the image folder
+        #for i in os.listdir(self.image_dir): # star from the image folder
+        for i in os.listdir(self.json_dir): # star from the Json folder
+
     #for i in os.listdir("E:\\estimagine\\vs_project\\PythonApplication_data_au\\pic\\"):
         # separath  the name of json 
             a, b = os.path.splitext(i)
             # if it is a json it will have corresponding image 
-            if b == ".jpg" :
+            if b == ".json" :
                 img_path = self.image_dir + a + ".jpg"
+                #jason_path  = self.json_dir + a + ".json"
                 img1 = cv2.imread(img_path)
+                
                 if img1 is None:
                     print ("no_img")
                 else:
+                    gray  =   cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+                    H,W   = gray.shape
                     # thsi json dir will be used to save  the generated json
                     json_dir = self.json_dir + a + ".json"
                     #copy the temp json
-                    this_json = self.jason_tmp
+                    with open(json_dir) as dir:
+                            this_json= JSON.load(dir)
+                    #this_json = self.jason_tmp
                     this_coodinates = self.coordinates0
+                    this_shape = this_json["shapes"]
+                    shape_temp = self.shapeTmp
+                    # the start should be choose larger than 50 , here it is 100
+                    sheath_contour  = self.seger.seg_process(img1,100)
+                    for iter  in range(2): #  2 contours here : iter is tje contoru index
+                        if  shape_temp[iter]["label"]  =="1":
+                            this_coodinates = shape_temp[iter]["points"] # remember add finding corred label 1!!!
+                            co_len = len (this_coodinates) 
+                            for iter2 in range (co_len):
+                                this_px  = this_coodinates[iter2][0] 
+                                this_coodinates[iter2][1] = sheath_contour[int(this_px)]
+                            shape_temp[iter] ["points"] = this_coodinates   #modify the shape temp
+                        else : 
+                            for iter2 in range (len(this_shape)):
+                                if  shape_temp[iter]["label"] == this_shape[iter2]["label"]:
+                                    shape_temp[iter] ["points"] = this_shape[iter2] ["points"]
 
                     # modify the imag name and the height and width next time
 
-                    # the start should be choose larger than 50 , here it is 100
-                    sheath_contour  = self.seger.seg_process(img1,100)
-                    for iter in range (self.co_len):
-                        this_px  = this_coodinates[iter][0] 
-                        this_coodinates[iter][1] = sheath_contour[int(this_px)]
+                    
+                    #for iter in range (self.co_len):
+                    #    this_px  = this_coodinates[iter][0] 
+                    #    this_coodinates[iter][1] = sheath_contour[int(this_px)]
 
-                    this_json ["shapes"] [1]["points"]  = this_coodinates
+                    this_json ["shapes"]   = shape_temp
+                    #this_json ["imageHeight"] = H
+                    #this_json ["imageWidth"] = W
+                    #this_json ["imagePath"] = a+ ".jpg"
+
                     #shape  = data["shapes"]
                     with open(json_dir, "w") as jsonFile:
                         JSON.dump(this_json, jsonFile)
