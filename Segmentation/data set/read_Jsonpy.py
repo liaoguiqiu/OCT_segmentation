@@ -116,13 +116,14 @@ class  Read_read_check_json_label(object):
                         add_3   = np.append(pathyl[::-1],pathyl,axis=0) # cascade
                         add_3   = np.append(add_3,pathyl[::-1],axis=0) # cascade
                         s = pd.Series(add_3)
-                        pathyl = s.interpolate()
+                        pathyl = s.interpolate(method = "linear")
                         pathyl = pathyl[path_w:2*path_w].to_numpy() 
                         pathxl = np.arange(int(pathx[0]) , int(pathx[0]) + path_w )
                        
                         contoursx[iter] = pathxl
                         contoursy[iter] = pathyl
-                        max_buffer[iter] = np.min(pathyl)  #  use the minimal value to detemine which contour as the 1st and 2nd .....
+                        #max_buffer[iter] = np.min(pathyl)  #  use the minimal value to detemine which contour as the 1st and 2nd .....
+                        max_buffer[iter] = np.max(pathyl)  #  use the mean value to detemine which contour as the 1st and 2nd .....
                         
                         pass
                     
