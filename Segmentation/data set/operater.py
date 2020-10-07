@@ -38,7 +38,7 @@ class Basic_Operator:
 
         pass
         return  contoursx, contoursy
-
+   
     def random_shape_contour(H,W,x,y):
         # first need to determine whether use the origina lcountour to shift 
         dc1 =np.random.random_sample()*10
@@ -254,8 +254,6 @@ class Basic_Operator:
     def generate_patch_base_origin(img1,H_new,contour0x,contour0y,
                                     new_contourx,new_contoury):
         H,W  = img1.shape
-
-
         contour0y = contour0y*H_new/H
         points = len(contour0x)
         points_new = len(new_contoury)
@@ -265,7 +263,6 @@ class Basic_Operator:
         contour0y=signal.resample(contour0y, W_new)
         img1 = cv2.resize(img1, (W,H_new), interpolation=cv2.INTER_AREA)
         
-
         new  = np.zeros((H_new,W_new))
         for i in range(W_new):
             #line_it = int( np.random.random_sample()*points)

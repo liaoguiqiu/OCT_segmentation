@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d973a49b-def9-479d-848b-defa787b9be9}</ProjectGuid>
     <ProjectHome>Segmentation\</ProjectHome>
-    <StartupFile>data set\read_Jsonpy.py</StartupFile>
+    <StartupFile>data set\generator_contour_sheath.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -36,6 +36,9 @@
     <Compile Include="data set\generator_contour.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="data set\generator_contour_sheath.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="data set\generator_layers.py">
       <SubType>Code</SubType>
     </Compile>
@@ -49,6 +52,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="data set\operater.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data set\operator2.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="data set\post_process.py">
