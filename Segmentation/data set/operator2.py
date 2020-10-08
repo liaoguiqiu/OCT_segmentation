@@ -25,8 +25,9 @@ class Basic_Operator2:
         c_len = len(contourx[1]) # use the send 
         #Dice = int( np.random.random_sample()*10)
         #method 1 just use the left and right side of the imag to raasampel
+        min_b  = int(np.max(contoury[0]))
+        max_b  = int(np.min(contoury[1]))
         if  c_len<0.8* ori_W:
-
 
             sourimg1  = img[:,0:contourx[1][0]]
             sourimg2  = img[:,contourx[1][c_len-2]: ori_W]
@@ -41,22 +42,49 @@ class Basic_Operator2:
             min_b  = int(np.max(contoury[0]))   
             out  = new[min_b:ori_H,0:W] # crop out the sheth
             out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
-        else:
-            #method 2 the line is generated with the line above the the contour 
-            #generate line by line 
-            min_b  = int(np.max(contoury[0]))
-            max_b  = int(np.min(contoury[1]))
-            sourimg  = img[min_b:max_b,:]
-            sr_H,sr_W  = sourimg.shape
-            pend_cnt  = int(H/sr_H)+1
-            pender  =   cv2.flip(sourimg, 0)
-            new  = sourimg
-            for i in range(pend_cnt):
-                new  = np.append(new,pender, axis=0) # cascade
-                pender  =   cv2.flip(pender, 0)
+        else :
+            if (max_b -min_b)>200 :
+                #method 2 the line is generated with the line above the the contour 
+                #generate line by line 
+                #min_b  = int(np.max(contoury[0]))
+                #max_b  = int(np.min(contoury[1]))
+                #if (max_b -min_b)>200:
+                sourimg  = img[min_b:max_b,:]
+                sr_H,sr_W  = sourimg.shape
+                pend_cnt  = int(H/sr_H)+1
+                pender  =   cv2.flip(sourimg, 0)
+                new  = sourimg
+                for i in range(pend_cnt):
+                    new  = np.append(new,pender, axis=0) # cascade
+                    pender  =   cv2.flip(pender, 0)
 
-            out  = new 
-            out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
+                out  = new 
+                out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
+            else:  # del with this special condition
+                index = 0
+                source_i  = 0
+                sourimg   = np.zeros((ori_H,50))
+                while(1):
+                    if contoury[1][index] > (ori_H-20):
+                        sourimg[:,source_i]  = img[:, contourx[1][index]]
+                        source_i+=1
+                        if  source_i >= 50:
+                            break
+                    index +=1 
+                    if index >= len(contoury[1]):
+                        index=0
+
+
+                sr_H,sr_W  = sourimg.shape
+                pend_cnt  = int(W/sr_W)+1
+                pender  =   cv2.flip(sourimg, 1)
+                new  = sourimg
+                for i in range(pend_cnt):
+                    new  = np.append(new,pender, axis=1) # cascade
+                    pender  =   cv2.flip(pender, 1)
+                min_b  = int(np.max(contoury[0]))   
+                out  = new[min_b:ori_H,0:W] # crop out the sheth
+                out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
         return out
 
     # use the H and W of origina to confine , and generate a random reseanable signal in the window
@@ -114,7 +142,7 @@ class Basic_Operator2:
         #newy=new_contoury+r_vector
         #newx = np.arange(dx1, dx2)
         return newx,newy
-    def random_shape_contour(H,W,sx,sy,x,y):
+    def random_shape_contour(H_ini,W_ini,H,W,sx,sy,x,y):
         # determine the tissue contour based o hte determined sheath contour
         dc1 =np.random.random_sample()*10
         dc1  = int(dc1)%2
@@ -143,6 +171,14 @@ class Basic_Operator2:
         else:       
             newy = y
             newx = x
+        if len(x) > 0.96 *W_ini: # consider the special condition of full and gapin middel 
+            # rememver to add resacle later
+            newy = signal.resample(y, W)
+            newx = np.arange(0, W)
+            #np.roll(y, int(np.random.random_sample()*len(y)-1)) 
+            newy  = newy +  np.random.random_sample() *H/2
+
+
         #limit by the bondary of the sheath
         for i in range(len( newy ) ):
 

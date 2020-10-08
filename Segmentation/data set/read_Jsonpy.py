@@ -120,6 +120,14 @@ class  Read_read_check_json_label(object):
                         pathyl = pathyl[path_w:2*path_w].to_numpy() 
                         pathxl = np.arange(int(pathx[0]) , int(pathx[0]) + path_w )
                        
+
+
+                        if len(pathxl) > 0.96 *W: #  correct  the unperfect label
+            # rememver to add resacle later
+                            pathyl = signal.resample(pathyl, W)
+                            pathxl = np.arange(0, W)
+                            
+
                         contoursx[iter] = pathxl
                         contoursy[iter] = pathyl
                         #max_buffer[iter] = np.min(pathyl)  #  use the minimal value to detemine which contour as the 1st and 2nd .....

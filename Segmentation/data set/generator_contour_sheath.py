@@ -199,8 +199,8 @@ class Generator_Contour_sheath(object):
                 #new_contourx=contour0x  +200
                 #new_contoury=contour0y-200
 
-                H_new = 1024
-                W_new = 1024
+                H_new = H
+                W_new = W
                 # genrate the new sheath contour
                 sheath_x,sheath_y = Basic_Operator2.random_sheath_contour(H_new,W_new,contourx[0],contoury[0])
 
@@ -209,13 +209,13 @@ class Generator_Contour_sheath(object):
                 cv2.imshow('shealth',New_img.astype(np.uint8))
 
                 #generate the signal 
-                new_contourx,new_contoury = Basic_Operator2.random_shape_contour(H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+                new_contourx,new_contoury = Basic_Operator2.random_shape_contour(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
                 New_img , mask  = Basic_Operator2. fill_patch_base_origin(img1,H_new,contourx[1],contoury[1],
                                     new_contourx,new_contoury,New_img , mask )
                 
                 
  
-                cv2.imshow('mask',mask.astype(np.uint8))
+                cv2.imshow('mask',New_img.astype(np.uint8))
 
                 #----------fill in the blank area today 
                 #----------fill in the blank area today 
@@ -230,44 +230,18 @@ class Generator_Contour_sheath(object):
                 display = Basic_Operator.draw_coordinates_color(RGB_imag,sheath_x,sheath_y,1) # draw the tissue
 
                 cv2.imshow('all',display.astype(np.uint8))
-
-
-                num_points = len(new_contourx)
-                #patch_l = generator.generate_background_image1(1,H_new,new_contourx[0])
-                patch_l = Basic_Operator .generate_background_image2(img1,contour0x,contour0y,H_new,np.clip(new_contourx[0],1,W_new))
-                patch_r = Basic_Operator .generate_background_image2(img1,contour0x,contour0y,H_new,np.clip(W_new -new_contourx[num_points-1],1,W_new))
-
-                #patch_r = generator.generate_background_image1(1,H_new,W_new -new_contourx[num_points-1])
-                #warp the contour 
-                Dice = int( np.random.random_sample()*10)
-                if Dice % 2 ==0 :
-                    patch = Basic_Operator .generate_patch_with_contour(img1,H_new,contour0x,contour0y,
-                                                     new_contourx,new_contoury)
-                else:
-                    patch = Basic_Operator .generate_patch_base_origin(img1,H_new,contour0x,contour0y,
-                                                     new_contourx,new_contoury)
-                #speckle 
-                patch= Basic_Operator.add_speckle_or_not(patch)
-                patch = Basic_Operator.add_gap_or_not(patch)
-
-                new_image=np.append(patch_l,patch,axis=1) 
-                new_image=np.append(new_image,patch_r,axis=1) 
-
-                new_image = Basic_Operator.add_noise_or_not(new_image) # noise
-                #new_image =new_image*0.8
-                cv2.imshow('w1',new_image.astype(np.uint8))
-
-                #self.display_contour(new_image,new_contourx,new_contoury,'warped')  
-                display  = Basic_Operator.gray2rgb(new_image)
-                display  = Basic_Operator.draw_coordinates_color(display,new_contourx,new_contoury,1)
-
-                #display = Basic_Operator.draw_coordinates_color(img_or,contour0x,contour0y,1)
-                cv2.imshow('color',display.astype(np.uint8))
+                 
                 cv2.waitKey(10)   
+                new_cx  = [None]*2
+                new_cy   = [None]*2
+                new_cx[0]  = sheath_x
+                new_cy[0]  = sheath_y
+                new_cx[1]  = new_contourx
+                new_cy[1]  = new_contoury
 
                 print(str(name))
-                self.append_new_name_contour(img_id,new_contourx,new_contoury,self.save_contour_dir)
-                cv2.imwrite(self.save_img_dir  + str(img_id) +".jpg",new_image )
+                self.append_new_name_contour(img_id,new_cx,new_cy,self.save_pkl_dir)
+                cv2.imwrite(self.save_image_dir  + str(img_id) +".jpg",combin )
                 img_id +=1
 
             
