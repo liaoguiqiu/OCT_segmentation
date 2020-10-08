@@ -6,11 +6,79 @@ import random
 import scipy.signal as signal
 from scipy.ndimage import gaussian_filter1d
 from operater import Basic_Operator
-
+from scipy import fftpack
 
 class Basic_Operator2:
+
+    def add_original_back (new,back,mask):
+        mask = np.clip(mask,0,1)
+        new = new + back*mask
+        # create mask1
+        #keep thebakcground part 
+ 
+        return new
+    def pure_background (img,contourx,contoury,H,W):
+        # use different strategies:
+        ori_H,ori_W  = img.shape
+        points = len(contourx[1])
+        new  = np.zeros((H,W))
+        c_len = len(contourx[1]) # use the send 
+        #Dice = int( np.random.random_sample()*10)
+        #method 1 just use the left and right side of the imag to raasampel
+        if  c_len<0.8* ori_W:
+
+
+            sourimg1  = img[:,0:contourx[1][0]]
+            sourimg2  = img[:,contourx[1][c_len-2]: ori_W]
+            sourimg = np.append(sourimg2,sourimg1,axis =1) # the right sequence 
+            sr_H,sr_W  = sourimg.shape
+            pend_cnt  = int(W/sr_W)+1
+            pender  =   cv2.flip(sourimg, 1)
+            new  = sourimg
+            for i in range(pend_cnt):
+                new  = np.append(new,pender, axis=1) # cascade
+                pender  =   cv2.flip(pender, 1)
+            min_b  = int(np.max(contoury[0]))   
+            out  = new[min_b:ori_H,0:W] # crop out the sheth
+            out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
+        else:
+            #method 2 the line is generated with the line above the the contour 
+            #generate line by line 
+            min_b  = int(np.max(contoury[0]))
+            max_b  = int(np.min(contoury[1]))
+            sourimg  = img[min_b:max_b,:]
+            sr_H,sr_W  = sourimg.shape
+            pend_cnt  = int(H/sr_H)+1
+            pender  =   cv2.flip(sourimg, 0)
+            new  = sourimg
+            for i in range(pend_cnt):
+                new  = np.append(new,pender, axis=0) # cascade
+                pender  =   cv2.flip(pender, 0)
+
+            out  = new 
+            out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
+        return out
+
     # use the H and W of origina to confine , and generate a random reseanable signal in the window
-    
+    def upsample_background (img,H_new,W_new):
+        # use fft to upsample 
+        H,W  = img.shape
+        im_fft = fftpack.fft2(img)
+        im_fft2 = im_fft.copy()
+        H,W  = img.shape
+
+        LR =  np.zeros((H,int((W_new - W)/2)))
+        new  = np.append(LR,im_fft2,axis=1) # cascade
+        new  = np.append(new,LR,axis=1) # cascade
+        H,W  = new.shape
+        TB = np.zeros(((int((H_new - H)/2)), W))
+        new  = np.append(TB,new,axis=0) # cascade
+        new  = np.append(new,TB,axis=0) # cascade
+        new_img  = fftpack.ifft2(im_fft2).real
+        new_img = cv2.resize(img, (W_new,H_new), interpolation=cv2.INTER_AREA)
+
+        return new_img
+
     def random_sheath_contour(H,W,x,y):
         # first need to determine whether use the origina lcountour to shift
 
@@ -150,7 +218,7 @@ class Basic_Operator2:
             #new[:,i] = Basic_Operator .warp_padding_line2(source_line, contour0y[i],new_contoury[i])
             #random select a source
             newy   = int(new_contoury[i] )
-            iniy   =  int (contour0y[line_it]) - 5   # add 5 to give more high light bondaries 
+            iniy   =  int (contour0y[line_it]) - 3   # add 5 to give more high light bondaries 
             shift  =  int(newy - iniy)
             if shift > 0:
                 new[newy:H_new,new_contourx[i]] = source_line[iniy:H_new-shift]

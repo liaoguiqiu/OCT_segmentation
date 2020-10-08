@@ -213,12 +213,24 @@ class Generator_Contour_sheath(object):
                 New_img , mask  = Basic_Operator2. fill_patch_base_origin(img1,H_new,contourx[1],contoury[1],
                                     new_contourx,new_contoury,New_img , mask )
                 
-                RGB_imag = Basic_Operator.gray2rgb(New_img) 
-                display = Basic_Operator.draw_coordinates_color(RGB_imag,new_contourx,new_contoury,2) # draw the tissue
-
-                cv2.imshow('contour2',display.astype(np.uint8))
+                
+ 
+                cv2.imshow('mask',mask.astype(np.uint8))
 
                 #----------fill in the blank area today 
+                #----------fill in the blank area today 
+                #----------fill in the blank area today 
+                min_b  = int(np.max(contoury[0]))
+                max_b  = int(np.min(contoury[1]))
+                backimage  =  Basic_Operator2.pure_background(img1 ,contourx,contoury, H_new,W_new)
+                cv2.imshow('back',backimage.astype(np.uint8))
+                combin = Basic_Operator2.add_original_back(New_img,backimage,mask)
+                RGB_imag = Basic_Operator.gray2rgb(combin) 
+                display = Basic_Operator.draw_coordinates_color(RGB_imag,new_contourx,new_contoury,2) # draw the tissue
+                display = Basic_Operator.draw_coordinates_color(RGB_imag,sheath_x,sheath_y,1) # draw the tissue
+
+                cv2.imshow('all',display.astype(np.uint8))
+
 
                 num_points = len(new_contourx)
                 #patch_l = generator.generate_background_image1(1,H_new,new_contourx[0])
