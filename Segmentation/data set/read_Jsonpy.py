@@ -22,8 +22,9 @@ class  Read_read_check_json_label(object):
 
         self.database_root = "D:/Deep learning/dataset/label data/"
 
-        self.image_dir   = self.database_root + "img/"
-        self.json_dir =  self.database_root + "label/"
+        self.image_dir   = self.database_root + "img/2/"
+        self.json_dir =  self.database_root + "label/2/"
+        self.save_dir  =   self.database_root +"seg label pkl/2/"
         self.img_num = 0
          
         self.contours_x =  [] # no predefines # predefine there are 4 contours
@@ -152,7 +153,7 @@ class  Read_read_check_json_label(object):
                     self.img_num = a
                     #self.contours_x = [path0ln, path1ln, path2ln, path3ln]
                     #self.saver.append_new_name_contour (self.img_num,self.contours,self.database_root)
-                    self.saver.append_new_name_contour (self.img_num,self.contours_x,self.contours_y,self.database_root)
+                    self.saver.append_new_name_contour (self.img_num,self.contours_x,self.contours_y,self.save_dir)
 
                     cv2.imshow('pic',img1)
                     print(str(a))

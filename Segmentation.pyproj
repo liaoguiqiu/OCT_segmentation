@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d973a49b-def9-479d-848b-defa787b9be9}</ProjectGuid>
     <ProjectHome>Segmentation\</ProjectHome>
-    <StartupFile>data set\generator_contour_sheath.py</StartupFile>
+    <StartupFile>data set\read_Jsonpy.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
