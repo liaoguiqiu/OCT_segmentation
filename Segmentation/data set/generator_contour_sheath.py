@@ -77,8 +77,8 @@ class Generator_Contour_sheath(object):
         self.OLG_flag =False
         self.origin_data = Save_Contour_pkl()
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
-        self.image_dir ="D:/Deep learning/dataset/label data/img/"
-        self.pkl_dir ="D:/Deep learning/dataset/label data/seg label pkl/"
+        self.image_dir ="D:/Deep learning/dataset/label data/img/2/"
+        self.pkl_dir ="D:/Deep learning/dataset/label data/seg label pkl/2/"
         self.save_image_dir ="D:/Deep learning/dataset/label data/img_generate/"
         self.save_pkl_dir ="D:/Deep learning/dataset/label data/pkl_generate/"
         self.origin_data =self.origin_data.read_data(self.pkl_dir)
@@ -190,6 +190,8 @@ class Generator_Contour_sheath(object):
                 #contour0y  = self.origin_data.contoursy[num][0]
                 contourx  = self.origin_data.contoursx[num]
                 contoury  = self.origin_data.contoursy[num]
+                
+
                 # draw this original contour 
                 display = Basic_Operator.draw_coordinates_color(img_or,contourx[0],contoury[0],1) # draw the sheath
                 display = Basic_Operator.draw_coordinates_color(img_or,contourx[1],contoury[1],2) # draw the tissue
@@ -220,6 +222,11 @@ class Generator_Contour_sheath(object):
                 #----------fill in the blank area today 
                 #----------fill in the blank area today 
                 #----------fill in the blank area today 
+                # fill in the blank area
+
+                contourx[0],contoury[0] = Basic_Operator2.re_fresh_path(contourx[0],contoury[0],H,W)
+
+                contourx[1],contoury[1] = Basic_Operator2.re_fresh_path(contourx[1],contoury[1],H,W)
                 min_b  = int(np.max(contoury[0]))
                 max_b  = int(np.min(contoury[1]))
                 backimage  =  Basic_Operator2.pure_background(img1 ,contourx,contoury, H_new,W_new)

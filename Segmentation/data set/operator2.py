@@ -23,8 +23,12 @@ class Basic_Operator2:
         points = len(contourx[1])
         new  = np.zeros((H,W))
         c_len = len(contourx[1]) # use the send 
+        #c_len0 = len(contourx[0]) # use the send 
+
         #Dice = int( np.random.random_sample()*10)
         #method 1 just use the left and right side of the imag to raasampel
+        
+
         min_b  = int(np.max(contoury[0]))
         max_b  = int(np.min(contoury[1]))
         if  c_len<0.8* ori_W:
@@ -60,13 +64,20 @@ class Basic_Operator2:
 
                 out  = new 
                 out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
-            else:  # del with this special condition
+            else:  # del with this special condition when full sorround contour 
+                #left_a = np.max([contourx[0][0],contourx[1][0]])
+                #right_a = np.max([contourx[0][0],contourx[c_len][0]])
                 index = 0
                 source_i  = 0
                 sourimg   = np.zeros((ori_H,50))
+                #calculate the with between 2 bondaries
+                py1_py2 = contoury[1]  - contoury[0]
+                max_d  = int(0.8*np.max(py1_py2)) 
+                sourimg   = np.zeros((max_d,50)) #  create a block based on the area
+
                 while(1):
-                    if contoury[1][index] > (ori_H-20):
-                        sourimg[:,source_i]  = img[:, contourx[1][index]]
+                    if ( contoury[1][index] - contoury[0][index] )> max_d:
+                        sourimg[:,source_i]  = img[int(contoury[0][index]):int(contoury[0][index]+max_d), contourx[1][index]]
                         source_i+=1
                         if  source_i >= 50:
                             break
@@ -76,14 +87,14 @@ class Basic_Operator2:
 
 
                 sr_H,sr_W  = sourimg.shape
-                pend_cnt  = int(W/sr_W)+1
+                pend_cnt  = int(W/sr_W)+1 # pend through horizontal
                 pender  =   cv2.flip(sourimg, 1)
                 new  = sourimg
                 for i in range(pend_cnt):
                     new  = np.append(new,pender, axis=1) # cascade
                     pender  =   cv2.flip(pender, 1)
-                min_b  = int(np.max(contoury[0]))   
-                out  = new[min_b:ori_H,0:W] # crop out the sheth
+                #min_b  = int(np.max(contoury[0]))   
+                out  = new[:,0:W] # crop out the sheth
                 out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
         return out
 
@@ -265,5 +276,42 @@ class Basic_Operator2:
 
  
         return new,mask
-             
-     
+    # deal with non full connected path, transfer these blank area         
+    def re_fresh_path( px,py,H,W):
+        # this function input the original coordinates of contour x and y, orginal image size and out put size
+
+        if len(px) > 0.96 *W: # first consider the special condition of full and gapin middel 
+            # rememver to add resacle later
+            new_y = signal.resample(py, W)
+            new_x = np.arange(0, W)
+            return new_x,new_y
+
+            ##np.roll(y, int(np.random.random_sample()*len(y)-1)) 
+            #newy  = newy +  np.random.random_sample() *H/2
+
+        
+        clen = len(px)
+                #img_piece = this_gray[:,this_pathx[0]:this_pathx[clen-1]]
+                # no crop blank version 
+        #factor=W2/W
+         
+        this_pathy = py 
+        #resample 
+         
+        # first determine the lef piece
+        pathl = np.zeros(int(px[0]))+ H-1
+        len1 = len(this_pathy)
+        len2 = len(pathl)
+        pathr = np.zeros(W-len1-len2) + H-1
+        path_piece = np.append(pathl,this_pathy,axis=0)
+        path_piece = np.append(path_piece,pathr,axis=0)
+        new_y = signal.resample(path_piece, W)
+
+        
+        
+        #in the down sample pathy function the dot with no label will be add a number of Height, 
+        #however because the label software can not label the leftmost and the rightmost points,
+        #so it will be given a max value,  I crop the edge of the label, remember to crop the image correspondingly .
+        new_x = np.arange(0, W)
+        #path_piece = signal.resample(path_piece[3:W2-3], W2)
+        return new_x,new_y
