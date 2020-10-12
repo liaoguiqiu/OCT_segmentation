@@ -183,17 +183,47 @@ class Basic_Operator2:
             newy = y
             newx = x
         if len(x) > 0.96 *W_ini: # consider the special condition of full and gapin middel 
-            # rememver to add resacle later
-            newy = signal.resample(y, W)
-            newx = np.arange(0, W)
-            #np.roll(y, int(np.random.random_sample()*len(y)-1)) 
-            newy  = newy +  np.random.random_sample() *H/2
 
+            width =  W
+            dx1 = 0
+            dx2  = W
+            dy1 = int(  np.random.random_sample()*H*1.5 -0.25*H)
+            dy2  = int  ( np.random.random_sample()*(H*1.5-dy1)) + dy1
+
+            height =  dy2-dy1
+            # star and end
+            #new x
+            newx = np.arange(dx1, dx2)
+            #new y based on a given original y
+            newy=signal.resample(y, width)
+            r_vector   = np.random.sample(20)*50
+            r_vector=signal.resample(r_vector, width)
+            r_vector = gaussian_filter1d (r_vector ,10)
+            newy = newy + r_vector
+            miny=min(newy)
+            height0  = max(newy)-miny
+            newy = (newy-miny) *height/height0 + dy1 
+
+
+            # rememver to add resacle later
+            #newy = signal.resample(y, W)
+            #newx = np.arange(0, W)
+            ##np.roll(y, int(np.random.random_sample()*len(y)-1)) 
+            #newy  = newy +  np.random.random_sample() *H/2
+
+            # and also deal with black area
+            for i in range(len( y ) ):
+                if y[i] >= (H_ini-5):
+                    newy[i]  = H-1 # allow it to merge int o 1 pix
 
         #limit by the bondary of the sheath
         for i in range(len( newy ) ):
 
             newy[i]  = np.clip(newy[i] , sy[newx[i]]-1,H-1) # allow it to merge int o 1 pix
+
+
+            
+
         #width  = 30% - % 50
         newy = np.clip(newy,0,H-1)
         
