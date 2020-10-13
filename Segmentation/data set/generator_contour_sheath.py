@@ -74,22 +74,54 @@ class Save_Contour_pkl(object):
 
 class Generator_Contour_sheath(object):
     def __init__(self ):
-        self.OLG_flag =False
+        self.OLG_flag =True
+        self.cv_display = False
         self.origin_data = Save_Contour_pkl()
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
-        self.image_dir ="D:/Deep learning/dataset/label data/img/2/"
-        self.pkl_dir ="D:/Deep learning/dataset/label data/seg label pkl/2/"
+        self.image_dir ="D:/Deep learning/dataset/label data/img/"
+        self.pkl_dir ="D:/Deep learning/dataset/label data/seg label pkl/"
         self.save_image_dir ="D:/Deep learning/dataset/label data/img_generate/"
         self.save_pkl_dir ="D:/Deep learning/dataset/label data/pkl_generate/"
-        self.origin_data =self.origin_data.read_data(self.pkl_dir)
+        #self.origin_data =self.origin_data.read_data(self.pkl_dir)
+        #self.origin_data = []
+
         self.back_ground_root  =  "../../"     + "saved_background_for_generator/"
 
-        self.save_img_dir = "../../"     + "saved_generated_contour/"
-        self.save_contour_dir = "../../"     + "saved_stastics_coutour_generated/"
+        #self.save_img_dir = "../../"     + "saved_generated_contour/"
+        #self.save_contour_dir = "../../"     + "saved_stastics_coutour_generated/"
         self.display_flag =True
         self.img_num= []
         self.contoursx = []
         self.contoursy = []
+
+        #get all the folder
+        self.all_dir_list = os.listdir(self.pkl_dir)
+        self.folder_num = len(self.all_dir_list)
+        # create the buffer list
+        self.folder_list = [None]*self.folder_num
+        self.signal = [None]*self.folder_num
+
+        # create all  the folder list and their data list
+
+        #number_i = 0
+        ## all_dir_list is subfolder list 
+        ##creat the image list point to the STASTICS TIS  list
+        ##saved_stastics = Generator_Contour()
+        ##read all the folder list
+        #for subfold in self.all_dir_list:
+        #    #if(number_i==0):
+        #    this_folder_list =  os.listdir(os.path.join(self.pkl_dir, subfold))
+        #    this_folder_list2 = [ self.pkl_dir +subfold + "/" + pointer for pointer in this_folder_list]
+        #    self.folder_list[number_i] = this_folder_list2
+
+        #    #change the dir firstly before read
+        #    #saved_stastics.all_statics_dir = os.path.join(self.signalroot, subfold, 'contour.pkl')
+        #    this_contour_dir =  self.pkl_dir+ subfold+'/'+ 'contours.pkl' # for both linux and window
+
+        #    self.signal[number_i]  =  self.read_data(this_contour_dir)
+        #    number_i +=1
+            #read the folder list finished  get the folder list and all saved path
+    
         #check or create this path
     def append_new_name_contour(self,number,this_contoursx,this_contoursy,dir):
         #buffer
@@ -103,12 +135,12 @@ class Generator_Contour_sheath(object):
             pickle.dump(self , f, pickle.HIGHEST_PROTOCOL)
         pass
     def check(self):
-        saved_path  = self.save_contour_dir
+        saved_path  = self.save_pkl_dir
         data = pickle.load(open(saved_path+'contours.pkl','rb'),encoding='iso-8859-1')
         file_len = len(data.img_num)
         for num in range(file_len):
                 name = data.img_num[num]
-                img_path = self.save_img_dir +  str(name) + ".jpg"
+                img_path = self.save_image_dir +  str(name) + ".jpg"
                 img_or = cv2.imread(img_path)
                 img1  =   cv2.cvtColor(img_or, cv2.COLOR_BGR2GRAY)
                 H,W = img1.shape
@@ -137,124 +169,122 @@ class Generator_Contour_sheath(object):
     
 
 
-    # to generate synthetic background with a number of origin img and return a image with size of H W
-    def generate_background_image1(self,number,H,W):
-        OriginalpathDirlist = os.listdir(self.back_ground_root)    # 
-        image_list = [None]*number
-        w_list = [None]* number
-        h_list = [None]* number
-
-        for i in range(number):
-            sample = random.sample(OriginalpathDirlist, 1)  # 
-            Sample_path = self.back_ground_root +   sample[0]
-            original_IMG = cv2.imread(Sample_path)
-            original_IMG  =   cv2.cvtColor(original_IMG, cv2.COLOR_BGR2GRAY)
-            h,w  =  original_IMG.shape
-            image_list[i] = original_IMG
-            w_list[i] = w
-            h_list[i] = h
-
-        w_sum = sum(w_list)
-        new  = np.zeros((H,W))
-        #generate line by line 
-        for i in range(W):
-            #random select a source
-            pic_it = int( np.random.random_sample()*number)
-            pic_it = np.clip(pic_it,0,number-1) 
-            img=image_list[pic_it]
-            #random select a A-line
-            line_it = int( np.random.random_sample()*w_list[pic_it])
-            line_it = np.clip(line_it,0,w_list[pic_it]-1) 
-            source_line = img[:,line_it]
-            source_h  = h_list[pic_it]
-            new[:,i] = self.fill_lv_with_sv1(source_line,H)
-        return new
-    
-    
+     
 
         
 
     def generate(self):
-        file_len = len(self.origin_data.img_num)
         #for num  in  self.origin_data.img_num:
         img_id =1
-        for n in range(50):
-            for num in range(file_len):
-                name = self.origin_data.img_num[num]
-                img_path = self.image_dir+ name + ".jpg"
-                img_or = cv2.imread(img_path)
-                img1  =   cv2.cvtColor(img_or, cv2.COLOR_BGR2GRAY)
-                H,W = img1.shape
-                #just use the first contour 
-                #contour0x  = self.origin_data.contoursx[num][0]
-                #contour0y  = self.origin_data.contoursy[num][0]
-                contourx  = self.origin_data.contoursx[num]
-                contoury  = self.origin_data.contoursy[num]
+        for n in range(2):  # repeat this to all data
+        # all_dir_list is subfolder list 
+        #creat the image list point to the STASTICS TIS  list
+        #saved_stastics = Generator_Contour()
+        #read all the folder list
+            #number_i = 0          
+            for subfold in self.all_dir_list:
+                #if(number_i==0):
+                #this_folder_list =  os.listdir(os.path.join(self.pkl_dir, subfold))
+                #this_folder_list2 = [ self.pkl_dir +subfold + "/" + pointer for pointer in this_folder_list]
+                #self.folder_list[number_i] = this_folder_list2
+
+                #change the dir firstly before read
+                #saved_stastics.all_statics_dir = os.path.join(self.signalroot, subfold, 'contour.pkl')
+                this_contour_dir =  self.pkl_dir+ subfold+'/'  # for both linux and window
+
+                self.origin_data =self.origin_data.read_data(this_contour_dir)  # this original data
+                #number_i +=1
+                file_len = len(self.origin_data.img_num)
+
+
+
+
+                for num in range(file_len):
+                    name = self.origin_data.img_num[num]
+                    img_path = self.image_dir+ subfold+'/' + name + ".jpg"
+                    img_or = cv2.imread(img_path)
+                    img1  =   cv2.cvtColor(img_or, cv2.COLOR_BGR2GRAY)
+                    H,W = img1.shape
+                    #just use the first contour 
+                    #contour0x  = self.origin_data.contoursx[num][0]
+                    #contour0y  = self.origin_data.contoursy[num][0]
+                    contourx  = self.origin_data.contoursx[num]
+                    contoury  = self.origin_data.contoursy[num]
                 
 
-                # draw this original contour 
-                display = Basic_Operator.draw_coordinates_color(img_or,contourx[0],contoury[0],1) # draw the sheath
-                display = Basic_Operator.draw_coordinates_color(img_or,contourx[1],contoury[1],2) # draw the tissue
-
-                cv2.imshow('origin',display.astype(np.uint8))
+                    # draw this original contour 
+                    display = Basic_Operator.draw_coordinates_color(img_or,contourx[0],contoury[0],1) # draw the sheath
+                    display = Basic_Operator.draw_coordinates_color(img_or,contourx[1],contoury[1],2) # draw the tissue
+                    if self.cv_display ==True:
+                        cv2.imshow('origin',display.astype(np.uint8))
             
-                #new_contourx=contour0x  +200
-                #new_contoury=contour0y-200
+                    #new_contourx=contour0x  +200
+                    #new_contoury=contour0y-200
 
-                H_new = H
-                W_new = W
-                # genrate the new sheath contour
-                sheath_x,sheath_y = Basic_Operator2.random_sheath_contour(H_new,W_new,contourx[0],contoury[0])
+                    H_new = H
+                    W_new = W
+                    # genrate the new sheath contour
+                    sheath_x,sheath_y = Basic_Operator2.random_sheath_contour(H_new,W_new,contourx[0],contoury[0])
 
-                New_img , mask = Basic_Operator2. fill_sheath_with_contour(img1,H_new,W_new,contourx[0],contoury[0],
-                                    sheath_x,sheath_y)
-                cv2.imshow('shealth',New_img.astype(np.uint8))
+                    New_img , mask = Basic_Operator2. fill_sheath_with_contour(img1,H_new,W_new,contourx[0],contoury[0],
+                                        sheath_x,sheath_y)
+                    if self.cv_display ==True:
 
-                #generate the signal 
-                new_contourx,new_contoury = Basic_Operator2.random_shape_contour(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
-                New_img , mask  = Basic_Operator2. fill_patch_base_origin(img1,H_new,contourx[1],contoury[1],
-                                    new_contourx,new_contoury,New_img , mask )
+                        cv2.imshow('shealth',New_img.astype(np.uint8))
+
+                    #generate the signal 
+                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+                    New_img , mask  = Basic_Operator2. fill_patch_base_origin(img1,H_new,contourx[1],contoury[1],
+                                        new_contourx,new_contoury,New_img , mask )
                 
                 
+                    if self.cv_display ==True:
  
-                cv2.imshow('mask',New_img.astype(np.uint8))
+                        cv2.imshow('mask',New_img.astype(np.uint8))
 
-                #----------fill in the blank area today 
-                #----------fill in the blank area today 
-                #----------fill in the blank area today 
-                # fill in the blank area
+                    #----------fill in the blank area today 
+                    #----------fill in the blank area today 
+                    #----------fill in the blank area today 
+                    # fill in the blank area
 
-                contourx[0],contoury[0] = Basic_Operator2.re_fresh_path(contourx[0],contoury[0],H,W)
+                    contourx[0],contoury[0] = Basic_Operator2.re_fresh_path(contourx[0],contoury[0],H,W)
 
-                contourx[1],contoury[1] = Basic_Operator2.re_fresh_path(contourx[1],contoury[1],H,W)
-                min_b  = int(np.max(contoury[0]))
-                max_b  = int(np.min(contoury[1]))
-                backimage  =  Basic_Operator2.pure_background(img1 ,contourx,contoury, H_new,W_new)
-                cv2.imshow('back',backimage.astype(np.uint8))
-                combin = Basic_Operator2.add_original_back(New_img,backimage,mask)
-                RGB_imag = Basic_Operator.gray2rgb(combin) 
-                display = Basic_Operator.draw_coordinates_color(RGB_imag,new_contourx,new_contoury,2) # draw the tissue
-                display = Basic_Operator.draw_coordinates_color(RGB_imag,sheath_x,sheath_y,1) # draw the tissue
+                    contourx[1],contoury[1] = Basic_Operator2.re_fresh_path(contourx[1],contoury[1],H,W)
+                    min_b  = int(np.max(contoury[0]))
+                    max_b  = int(np.min(contoury[1]))
+                    backimage  =  Basic_Operator2.pure_background(img1 ,contourx,contoury, H_new,W_new)
+                    if self.cv_display ==True:
 
-                cv2.imshow('all',display.astype(np.uint8))
+                        cv2.imshow('back',backimage.astype(np.uint8))
+                    combin = Basic_Operator2.add_original_back(New_img,backimage,mask)
+                    combin= Basic_Operator.add_speckle_or_not(combin)
+                    combin= Basic_Operator.add_noise_or_not(combin)
+                    combin = Basic_Operator.add_gap_or_not(combin)
+
+                    RGB_imag = Basic_Operator.gray2rgb(combin) 
+                    display = Basic_Operator.draw_coordinates_color(RGB_imag,new_contourx,new_contoury,2) # draw the tissue
+                    display = Basic_Operator.draw_coordinates_color(RGB_imag,sheath_x,sheath_y,1) # draw the tissue
+
+                    cv2.imshow('all',display.astype(np.uint8))
                  
-                cv2.waitKey(10)   
-                new_cx  = [None]*2
-                new_cy   = [None]*2
-                new_cx[0]  = sheath_x
-                new_cy[0]  = sheath_y
-                new_cx[1]  = new_contourx
-                new_cy[1]  = new_contoury
+                    cv2.waitKey(10)   
+                    new_cx  = [None]*2
+                    new_cy   = [None]*2
+                    new_cx[0]  = sheath_x
+                    new_cy[0]  = sheath_y
+                    new_cx[1]  = new_contourx
+                    new_cy[1]  = new_contoury
 
-                print(str(name))
-                self.append_new_name_contour(img_id,new_cx,new_cy,self.save_pkl_dir)
-                cv2.imwrite(self.save_image_dir  + str(img_id) +".jpg",combin )
-                img_id +=1
+                    print(str(name))
+                    self.append_new_name_contour(img_id,new_cx,new_cy,self.save_pkl_dir)
+
+                    cv2.imwrite(self.save_image_dir  + str(img_id) +".jpg",combin )
+                    img_id +=1
 
             
 
 
-                pass
+                    pass
 
 
 if __name__ == '__main__':
@@ -271,18 +301,21 @@ if __name__ == '__main__':
         #generator.save_img_dir = "../../../../../"  + "Deep learning/dataset/"
         #generator.save_contour_dir = "../../"     + "saved_stastics_coutour_generated/"
 
-        imgbase_dir = "../../../../../"  + "Deep learning/dataset/For_contour_train/pic/"
-        labelbase_dir = "../../../../../"  + "Deep learning/dataset/For_contour_train/label/"
+        imgbase_dir = "../../../../../"  + "Deep learning/dataset/For_contour_sheath_train/train_OLG/pic/"
+        labelbase_dir = "../../../../../"  + "Deep learning/dataset/For_contour_sheath_train/train_OLG/label/"
 
         while(1):
-            generator  = Generator_Contour()
+            generator  = Generator_Contour_sheath()
 
             talker=talker.read_data(com_dir)
-
+            # only use for the first ytime
+            #talker.training=1  # only use for the first ytime
+            #talker.writing=2  # only use for the first ytime
+            #talker.pending = 0
             if talker.training==1 and talker.writing==2: # check if 2 need writing
                 if talker.pending == 0 :
-                    generator.save_img_dir = imgbase_dir+"2/"
-                    generator.save_contour_dir =  labelbase_dir+"2/"
+                    generator.save_image_dir = imgbase_dir+"2/"
+                    generator.save_pkl_dir =  labelbase_dir+"2/"
 
                     generator.generate() # generate
 
@@ -291,8 +324,8 @@ if __name__ == '__main__':
                     talker.save_data(com_dir)
             if talker.training==2 and talker.writing==1: # check if 2 need writing
                 if talker.pending == 0 :
-                    generator.save_img_dir = imgbase_dir+"1/"
-                    generator.save_contour_dir =  labelbase_dir+"1/"
+                    generator.save_image_dir = imgbase_dir+"1/"
+                    generator.save_pkl_dir =  labelbase_dir+"1/"
 
                     generator.generate() # generate
 
@@ -302,9 +335,6 @@ if __name__ == '__main__':
             cv2.waitKey(1000)   
             print("waiting")
 
-
-
-    
     generator.generate()
     
     generator.check()

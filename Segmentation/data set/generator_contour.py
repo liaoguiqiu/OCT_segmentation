@@ -64,7 +64,7 @@ class Save_Contour_pkl(object):
         pass
     #read from file
     def read_data(self,base_root):
-        saved_path  = base_root  + "seg label pkl/"
+        saved_path  = base_root   
         self = pickle.load(open(saved_path+'contours.pkl','rb'),encoding='iso-8859-1')
         return self
 
