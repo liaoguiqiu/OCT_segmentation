@@ -20,7 +20,7 @@ class  Auto_json_label(object):
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL-BACKSIDE-center/"
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL-BACKSIDE/"
-        jason_tmp_dir  =  "D:/Deep learning/dataset/label data/label/0.json"
+        jason_tmp_dir  =  "D:/Deep learning/dataset/original/phantom/1/label/0.json"
         # read th jso fie in hte start :
         with open(jason_tmp_dir) as dir:
             self.jason_tmp = JSON.load(dir)
@@ -28,9 +28,9 @@ class  Auto_json_label(object):
         self.coordinates0 = self.jason_tmp["shapes"] [1]["points"] # remember add finding corred label 1!!!
         self.co_len = len (self.coordinates0) 
 
-        self.database_root = "D:/Deep learning/dataset/label data/"
+        self.database_root = "D:/Deep learning/dataset/original/phantom/1/"
 
-        self.image_dir   = self.database_root + "img/"
+        self.image_dir   = self.database_root + "pic/"
         self.json_dir =  self.database_root + "label/" # for this class sthis dir ist save the modified json 
         self.img_num = 0
          

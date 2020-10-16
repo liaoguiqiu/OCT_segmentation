@@ -76,8 +76,8 @@ class Basic_Operator2:
                 sourimg   = np.zeros((max_d,50)) #  create a block based on the area
 
                 while(1):
-                    if ( contoury[1][index] - contoury[0][index] )> max_d:
-                        sourimg[:,source_i]  = img[int(contoury[0][index]):int(contoury[0][index]+max_d), contourx[1][index]]
+                    if ( contoury[1][index] - contoury[0][index] )> max_d+5:
+                        sourimg[:,source_i]  = img[int(contoury[0][index]):int(contoury[0][index])+max_d, contourx[1][index]]
                         source_i+=1
                         if  source_i >= 50:
                             break
@@ -155,9 +155,9 @@ class Basic_Operator2:
         return newx,newy
     def random_shape_contour(H_ini,W_ini,H,W,sx,sy,x,y):
         # determine the tissue contour based o hte determined sheath contour
-        dc1 =np.random.random_sample()*10
-        dc1  = int(dc1)%2
-        if dc1==0: # use the original signal 
+        dc1 =np.random.random_sample()*100
+        dc1  = int(dc1)%10
+        if dc1!=0: # use the original signal 
             # inital ramdon width and height
            
             width =  int((0.05+0.91* np.random.random_sample())*W)

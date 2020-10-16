@@ -176,7 +176,7 @@ class Generator_Contour_sheath(object):
     def generate(self):
         #for num  in  self.origin_data.img_num:
         img_id =1
-        for n in range(2):  # repeat this to all data
+        for n in range(10):  # repeat this to all data
         # all_dir_list is subfolder list 
         #creat the image list point to the STASTICS TIS  list
         #saved_stastics = Generator_Contour()
@@ -311,7 +311,7 @@ if __name__ == '__main__':
             # only use for the first ytime
             #talker.training=1  # only use for the first ytime
             #talker.writing=2  # only use for the first ytime
-            #talker.pending = 0
+            #talker.pending = 0 # only use for the first ytime
             if talker.training==1 and talker.writing==2: # check if 2 need writing
                 if talker.pending == 0 :
                     generator.save_image_dir = imgbase_dir+"2/"
@@ -322,6 +322,7 @@ if __name__ == '__main__':
                     talker.writing=1
                     talker.pending=1
                     talker.save_data(com_dir)
+            # set break point here for first time
             if talker.training==2 and talker.writing==1: # check if 2 need writing
                 if talker.pending == 0 :
                     generator.save_image_dir = imgbase_dir+"1/"
