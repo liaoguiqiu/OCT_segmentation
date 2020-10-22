@@ -1,6 +1,6 @@
 # update 4:38 2nd OCt 2020
 # this is to modify/opy a exiting Json file to generate the contour of the theatht 
-# this auto json is to modifile the image already be labeled
+#!!! this auto json is to generate json for images without label file , this willl generate a lot of json file 
 import json as JSON
 import cv2
 import math
@@ -12,7 +12,21 @@ import scipy.signal as signal
 import pandas as pd
 from generator_contour import Save_Contour_pkl
 from seg_one_1 import Seg_One_1
+import codecs
+import PIL.ExifTags
+import PIL.Image
+import PIL.ImageOps
+import base64
+import io
 
+def encodeImageForJson(image):
+    img_pil = PIL.Image.fromarray(image, mode='RGB')
+    f = io.BytesIO()
+    img_pil.save(f, format='PNG')
+    data = f.getvalue()
+    encData = codecs.encode(data, 'base64').decode()
+    encData = encData.replace('\n', '')
+    return encData
 class  Auto_json_label(object):
     def __init__(self ):
         #self.image_dir   = "../../OCT/beam_scanning/Data set/pic/NORMAL-BACKSIDE-center/"
@@ -32,6 +46,7 @@ class  Auto_json_label(object):
 
         self.image_dir   = self.database_root + "pic/"
         self.json_dir =  self.database_root + "label/" # for this class sthis dir ist save the modified json 
+        self.json_save_dir  = self.database_root + "label_generate/"
         self.img_num = 0
          
         self.contours_x =  [] # no predefines # predefine there are 4 contours
@@ -63,13 +78,13 @@ class  Auto_json_label(object):
         return img1
     def check_one_folder (self):
         #for i in os.listdir(self.image_dir): # star from the image folder
-        for i in os.listdir(self.json_dir): # star from the Json folder
+        for i in os.listdir(self.image_dir): # star from the image folder
 
     #for i in os.listdir("E:\\estimagine\\vs_project\\PythonApplication_data_au\\pic\\"):
         # separath  the name of json 
             a, b = os.path.splitext(i)
-            # if it is a json it will have corresponding image 
-            if b == ".json" :
+            # if it is a img it will have corresponding image 
+            if b == ".jpg" :
                 img_path = self.image_dir + a + ".jpg"
                 #jason_path  = self.json_dir + a + ".json"
                 img1 = cv2.imread(img_path)
@@ -80,13 +95,13 @@ class  Auto_json_label(object):
                     gray  =   cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
                     H,W   = gray.shape
                     # thsi json dir will be used to save  the generated json
-                    json_dir = self.json_dir + a + ".json"
+                    save_json_dir = self.json_save_dir + a + ".json"
                     #copy the temp json
-                    with open(json_dir) as dir:
-                            this_json= JSON.load(dir)
-                    #this_json = self.jason_tmp
+                    #with open(json_dir) as dir:
+                    #        this_json= JSON.load(dir)
+                    this_json = self.jason_tmp
                     this_coodinates = self.coordinates0
-                    this_shape = this_json["shapes"]
+                    this_shape = self.shapeTmp
                     shape_temp = self.shapeTmp
                     # the start should be choose larger than 50 , here it is 100
                     sheath_contour  = self.seger.seg_process(img1,100)
@@ -111,12 +126,12 @@ class  Auto_json_label(object):
                     #    this_coodinates[iter][1] = sheath_contour[int(this_px)]
 
                     this_json ["shapes"]   = shape_temp
-                    #this_json ["imageHeight"] = H
-                    #this_json ["imageWidth"] = W
-                    #this_json ["imagePath"] = a+ ".jpg"
-
+                    this_json ["imageHeight"] = H
+                    this_json ["imageWidth"] = W
+                    this_json ["imagePath"] = a+ ".jpg"
+                    this_json [ "imageData"]  = encodeImageForJson(img1)
                     #shape  = data["shapes"]
-                    with open(json_dir, "w") as jsonFile:
+                    with open(save_json_dir, "w") as jsonFile:
                         JSON.dump(this_json, jsonFile)
                     #num_line  = len(shape)
                     #len_list=  num_line

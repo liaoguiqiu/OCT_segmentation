@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d973a49b-def9-479d-848b-defa787b9be9}</ProjectGuid>
     <ProjectHome>Segmentation\</ProjectHome>
-    <StartupFile>data set\generator_contour_sheath.py</StartupFile>
+    <StartupFile>data set\auto_json_2.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -31,6 +31,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="data set\auto_json.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="data set\auto_json_2.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="data set\generator_contour.py">

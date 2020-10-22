@@ -75,7 +75,7 @@ class Save_Contour_pkl(object):
 class Generator_Contour_sheath(object):
     def __init__(self ):
         self.OLG_flag =True
-        self.cv_display = False
+        self.cv_display = True
         self.origin_data = Save_Contour_pkl()
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
         self.image_dir ="D:/Deep learning/dataset/label data/img/"
@@ -176,28 +176,28 @@ class Generator_Contour_sheath(object):
     def generate(self):
         #for num  in  self.origin_data.img_num:
         img_id =1
-        for n in range(10):  # repeat this to all data
         # all_dir_list is subfolder list 
         #creat the image list point to the STASTICS TIS  list
         #saved_stastics = Generator_Contour()
         #read all the folder list
             #number_i = 0          
-            for subfold in self.all_dir_list:
-                #if(number_i==0):
-                #this_folder_list =  os.listdir(os.path.join(self.pkl_dir, subfold))
-                #this_folder_list2 = [ self.pkl_dir +subfold + "/" + pointer for pointer in this_folder_list]
-                #self.folder_list[number_i] = this_folder_list2
+        for subfold in self.all_dir_list:
+            #if(number_i==0):
+            #this_folder_list =  os.listdir(os.path.join(self.pkl_dir, subfold))
+            #this_folder_list2 = [ self.pkl_dir +subfold + "/" + pointer for pointer in this_folder_list]
+            #self.folder_list[number_i] = this_folder_list2
 
-                #change the dir firstly before read
-                #saved_stastics.all_statics_dir = os.path.join(self.signalroot, subfold, 'contour.pkl')
-                this_contour_dir =  self.pkl_dir+ subfold+'/'  # for both linux and window
+            #change the dir firstly before read
+            #saved_stastics.all_statics_dir = os.path.join(self.signalroot, subfold, 'contour.pkl')
+            this_contour_dir =  self.pkl_dir+ subfold+'/'  # for both linux and window
 
-                self.origin_data =self.origin_data.read_data(this_contour_dir)  # this original data
-                #number_i +=1
-                file_len = len(self.origin_data.img_num)
+            self.origin_data =self.origin_data.read_data(this_contour_dir)  # this original data
+            #number_i +=1
+            file_len = len(self.origin_data.img_num)
 
+            repeat = int(300/file_len) # repeat to balance
 
-
+            for n in range(repeat):  # repeat this to all data
 
                 for num in range(file_len):
                     name = self.origin_data.img_num[num]
