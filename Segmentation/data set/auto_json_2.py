@@ -41,12 +41,15 @@ class  Auto_json_label(object):
         self.shapeTmp  = self.jason_tmp["shapes"]
         self.coordinates0 = self.jason_tmp["shapes"] [1]["points"] # remember add finding corred label 1!!!
         self.co_len = len (self.coordinates0) 
-
-        self.database_root = "D:/Deep learning/dataset/original/phantom/1/"
-
+        self.f_downsample_factor  = 4
+        self.database_root = "D:/Deep learning/dataset/original/phantom/2/"
+        #self.database_root = "D:/Deep learning/dataset/original/phantom/1/"
+        #self.database_root = "D:/Deep learning/dataset/original/animal_tissue/1/"
+        #self.database_root = "D:/Deep learning/dataset/original/IVOCT/1/"
         self.image_dir   = self.database_root + "pic/"
         self.json_dir =  self.database_root + "label/" # for this class sthis dir ist save the modified json 
         self.json_save_dir  = self.database_root + "label_generate/"
+        self.all_dir = self.database_root + "pic_all/"
         self.img_num = 0
          
         self.contours_x =  [] # no predefines # predefine there are 4 contours
@@ -76,6 +79,29 @@ class  Auto_json_label(object):
 
 
         return img1
+        #this is to down sample the image in one folder
+    def downsample_folder(self):#this is to down sample the image in one folder
+        read_sequence = os.listdir(self.all_dir) # read all file name
+        seqence_Len = len(read_sequence)    # get all file number 
+          
+        for sequence_num in range(0,seqence_Len):
+        #for i in os.listdir("E:/estimagine/vs_project/PythonApplication_data_au/pic/"):
+            if (sequence_num%self.f_downsample_factor == 0):
+                img_path = self.all_dir + str(sequence_num) + ".jpg"
+                #jason_path  = self.json_dir + a + ".json"
+                img1 = cv2.imread(img_path)
+                
+                if img1 is None:
+                    print ("no_img")
+                else:
+                    # write this one into foler
+                    cv2.imwrite(self.image_dir  + str(sequence_num) +".jpg",img1 )
+                    print("write  " + str(sequence_num))
+                    pass
+
+            sequence_num+=1
+            pass
+
     def check_one_folder (self):
         #for i in os.listdir(self.image_dir): # star from the image folder
         for i in os.listdir(self.image_dir): # star from the image folder
@@ -139,4 +165,5 @@ class  Auto_json_label(object):
                     #    data = JSON.load(f_dir)
 if __name__ == '__main__':
         cheker  = Auto_json_label()
+        cheker.downsample_folder()
         cheker.check_one_folder() 

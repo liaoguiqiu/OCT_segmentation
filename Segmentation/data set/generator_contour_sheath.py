@@ -196,6 +196,7 @@ class Generator_Contour_sheath(object):
             file_len = len(self.origin_data.img_num)
 
             repeat = int(300/file_len) # repeat to balance
+            #repeat = 1
 
             for n in range(repeat):  # repeat this to all data
 

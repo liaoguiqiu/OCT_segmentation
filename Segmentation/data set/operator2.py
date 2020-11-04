@@ -18,6 +18,36 @@ class Basic_Operator2:
  
         return new
     def pure_background (img,contourx,contoury,H,W):
+
+        def  flip_source_to_full(sourimg,H,W):
+            #this is to filip the source and duplicate on patch to a full image
+
+            # first flip through Horizontal
+            sr_H,sr_W  = sourimg.shape
+            pend_cnt  = int(W/sr_W)+1
+            pender  =   cv2.flip(sourimg, 1)
+            new  = sourimg
+            for i in range(pend_cnt):
+                new  = np.append(new,pender, axis=1) # cascade
+                pender  =   cv2.flip(pender, 1)
+
+            # then flip through vertial
+            sourimg=new
+            sr_H,sr_W  = sourimg.shape
+            pend_cnt  = int(H/sr_H)+1
+            pender  =   cv2.flip(sourimg, 0)
+            new  = sourimg
+            for i in range(pend_cnt):
+                new  = np.append(new,pender, axis=0) # cascade
+                pender  =   cv2.flip(pender, 0)
+
+            out  = new[0:H,0:W]
+            return out
+            #pass
+
+
+
+
         # use different strategies:
         ori_H,ori_W  = img.shape
         points = len(contourx[1])
@@ -32,20 +62,21 @@ class Basic_Operator2:
         min_b  = int(np.max(contoury[0]))
         max_b  = int(np.min(contoury[1]))
         if  c_len<0.8* ori_W:
-
-            sourimg1  = img[:,0:contourx[1][0]]
-            sourimg2  = img[:,contourx[1][c_len-2]: ori_W]
-            sourimg = np.append(sourimg2,sourimg1,axis =1) # the right sequence 
-            sr_H,sr_W  = sourimg.shape
-            pend_cnt  = int(W/sr_W)+1
-            pender  =   cv2.flip(sourimg, 1)
-            new  = sourimg
-            for i in range(pend_cnt):
-                new  = np.append(new,pender, axis=1) # cascade
-                pender  =   cv2.flip(pender, 1)
             min_b  = int(np.max(contoury[0]))   
-            out  = new[min_b:ori_H,0:W] # crop out the sheth
-            out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
+
+            sourimg1  = img[min_b:ori_H,0:contourx[1][0]]
+            sourimg2  = img[min_b:ori_H,contourx[1][c_len-2]: ori_W]
+            sourimg = np.append(sourimg2,sourimg1,axis =1) # the right sequence 
+            #out = flip_source_to_full(sourimg,H,W)
+            #sr_H,sr_W  = sourimg.shape
+            #pend_cnt  = int(W/sr_W)+1
+            #pender  =   cv2.flip(sourimg, 1)
+            #new  = sourimg
+            #for i in range(pend_cnt):
+            #    new  = np.append(new,pender, axis=1) # cascade
+            #    pender  =   cv2.flip(pender, 1)
+            #out  = new[:,0:W] # crop out the sheth
+            #out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
         else :
             if (max_b -min_b)>200 :
                 #method 2 the line is generated with the line above the the contour 
@@ -54,16 +85,18 @@ class Basic_Operator2:
                 #max_b  = int(np.min(contoury[1]))
                 #if (max_b -min_b)>200:
                 sourimg  = img[min_b:max_b,:]
-                sr_H,sr_W  = sourimg.shape
-                pend_cnt  = int(H/sr_H)+1
-                pender  =   cv2.flip(sourimg, 0)
-                new  = sourimg
-                for i in range(pend_cnt):
-                    new  = np.append(new,pender, axis=0) # cascade
-                    pender  =   cv2.flip(pender, 0)
+                #out = flip_source_to_full(sourimg,H,W)
 
-                out  = new 
-                out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
+                #sr_H,sr_W  = sourimg.shape
+                #pend_cnt  = int(H/sr_H)+1
+                #pender  =   cv2.flip(sourimg, 0)
+                #new  = sourimg
+                #for i in range(pend_cnt):
+                #    new  = np.append(new,pender, axis=0) # cascade
+                #    pender  =   cv2.flip(pender, 0)
+
+                #out  = new 
+                #out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
             else:  # del with this special condition when full sorround contour 
                 #left_a = np.max([contourx[0][0],contourx[1][0]])
                 #right_a = np.max([contourx[0][0],contourx[c_len][0]])
@@ -72,30 +105,32 @@ class Basic_Operator2:
                 sourimg   = np.zeros((ori_H,50))
                 #calculate the with between 2 bondaries
                 py1_py2 = contoury[1]  - contoury[0]
-                max_d  = int(0.8*np.max(py1_py2)) 
-                sourimg   = np.zeros((max_d,50)) #  create a block based on the area
+                max_d  = int(0.7*np.max(py1_py2)) 
+                sourimg   = np.zeros((max_d,W)) #  create a block based on the area
 
                 while(1):
                     if ( contoury[1][index] - contoury[0][index] )> max_d+5:
                         sourimg[:,source_i]  = img[int(contoury[0][index]):int(contoury[0][index])+max_d, contourx[1][index]]
                         source_i+=1
-                        if  source_i >= 50:
+                        if  source_i >= W:
                             break
                     index +=1 
                     if index >= len(contoury[1]):
                         index=0
 
 
-                sr_H,sr_W  = sourimg.shape
-                pend_cnt  = int(W/sr_W)+1 # pend through horizontal
-                pender  =   cv2.flip(sourimg, 1)
-                new  = sourimg
-                for i in range(pend_cnt):
-                    new  = np.append(new,pender, axis=1) # cascade
-                    pender  =   cv2.flip(pender, 1)
-                #min_b  = int(np.max(contoury[0]))   
-                out  = new[:,0:W] # crop out the sheth
-                out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
+                #sr_H,sr_W  = sourimg.shape
+                #pend_cnt  = int(W/sr_W)+1 # pend through horizontal
+                #pender  =   cv2.flip(sourimg, 1)
+                #new  = sourimg
+                #for i in range(pend_cnt):
+                #    new  = np.append(new,pender, axis=1) # cascade
+                #    pender  =   cv2.flip(pender, 1)
+                ##min_b  = int(np.max(contoury[0]))   
+                #out  = new[:,0:W] # crop out the sheth
+                #out  = cv2.resize(out, (W,H), interpolation=cv2.INTER_LINEAR )
+        out = flip_source_to_full(sourimg,H,W)
+
         return out
 
     # use the H and W of origina to confine , and generate a random reseanable signal in the window
