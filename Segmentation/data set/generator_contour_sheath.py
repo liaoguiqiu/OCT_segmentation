@@ -74,8 +74,8 @@ class Save_Contour_pkl(object):
 
 class Generator_Contour_sheath(object):
     def __init__(self ):
-        self.OLG_flag =False
-        self.cv_display = True
+        self.OLG_flag =True
+        self.cv_display = False
         self.origin_data = Save_Contour_pkl()
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
         self.image_dir ="D:/Deep learning/dataset/label data/img/"
@@ -236,8 +236,8 @@ class Generator_Contour_sheath(object):
                         cv2.imshow('shealth',New_img.astype(np.uint8))
 
                     #generate the signal 
-                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
-                    New_img , mask  = Basic_Operator2. fill_patch_base_origin(img1,H_new,contourx[1],contoury[1],
+                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour2(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+                    New_img , mask  = Basic_Operator2. fill_patch_base_origin2(img1,H_new,contourx[1],contoury[1],
                                         new_contourx,new_contoury,New_img , mask )
                 
                 

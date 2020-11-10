@@ -145,10 +145,12 @@ class Basic_Operator:
         return img
     def add_speckle_or_not (img):
         Dice = int( np.random.random_sample()*10)
-        if Dice % 2 ==0 :
-            return img
-        else:
+        if Dice % 5 ==0 :
             return Basic_Operator.ramdom_speckle(img)
+
+        else:
+            return img
+
     def ramdom_gap(img):
         H,W = img.shape 
         mask = np.ones((H,W))
@@ -169,10 +171,12 @@ class Basic_Operator:
         return img
     def add_gap_or_not (img):
         Dice = int( np.random.random_sample()*10)
-        if Dice % 2 ==0 :
-            return img
-        else:
+        if Dice % 5 ==0 :
             return Basic_Operator.ramdom_gap(img)
+
+        else:
+            return img
+
         
     def draw_coordinates_color(img1,vx,vy,color):       
             if color ==0:
