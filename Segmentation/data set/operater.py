@@ -82,7 +82,7 @@ class Basic_Operator:
         return newx,newy
     #draw color contour 
     def add_noise_or_not(img):
-        noise_selector=['none','s&p','gauss_noise','speckle']
+        noise_selector=['none','s&p','gauss_noise','gauss_noise']
         noise_it = np.random.random_sample()*5
         noise_type1  =  str( noise_selector[int(noise_it)%4])  
         img  =  Basic_Operator.noisy(noise_type1,img)

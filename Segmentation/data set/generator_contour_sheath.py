@@ -74,7 +74,7 @@ class Save_Contour_pkl(object):
 
 class Generator_Contour_sheath(object):
     def __init__(self ):
-        self.OLG_flag =True
+        self.OLG_flag =False
         self.cv_display = True
         self.origin_data = Save_Contour_pkl()
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
@@ -196,7 +196,9 @@ class Generator_Contour_sheath(object):
             file_len = len(self.origin_data.img_num)
 
             repeat = int(300/file_len) # repeat to balance
-            #repeat = 1
+            if repeat<1:
+
+                repeat = 1
 
             for n in range(repeat):  # repeat this to all data
 
