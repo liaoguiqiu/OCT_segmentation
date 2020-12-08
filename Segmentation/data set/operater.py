@@ -145,7 +145,7 @@ class Basic_Operator:
         return img
     def add_speckle_or_not (img):
         Dice = int( np.random.random_sample()*10)
-        if Dice % 5 ==0 :
+        if Dice % 1 ==0 :
             return Basic_Operator.ramdom_speckle(img)
 
         else:

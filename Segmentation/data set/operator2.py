@@ -191,8 +191,8 @@ class Basic_Operator2:
     # this one will not regard the original width of contour
     def random_shape_contour2(H_ini,W_ini,H,W,sx,sy,x,y):
         dc1 =np.random.random_sample()*100
-        dc1  = int(dc1)%10
-        if dc1!=0: # use the original signal 
+         
+        if int(dc1)%2!=0: # use the original signal 
             # inital ramdon width and height
            
             width =  int((0.05+0.91* np.random.random_sample())*W)
@@ -214,9 +214,17 @@ class Basic_Operator2:
             miny=min(newy)
             height0  = max(newy)-miny
             newy = (newy-miny) *height/height0 + dy1 
-        else:       
-            newy = y
-            newx = x
+        else:      
+            
+            if int(dc1)%4!=0:
+                newy = y  + np.random.random_sample()*H
+                newx = x
+            else:
+                newy = H -y
+                newy = np.clip(newy,20,H-1)-20
+                newy = newy * np.random.random_sample() * 2
+                newy = H - newy
+                newx = x
          
         for i in range(len( newy ) ):
 
