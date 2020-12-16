@@ -1,5 +1,5 @@
 #log of modification cre
-
+# this  is used  to read json files and trasfer into a pkl file
 import json as JSON
 import cv2
 import math
@@ -19,7 +19,7 @@ class  Read_read_check_json_label(object):
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL/"
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL-BACKSIDE-center/"
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/NORMAL-BACKSIDE/"
-        sub_folder = "1/"
+        sub_folder = "2/"
         self.database_root = "D:/Deep learning/dataset/label data/"
 
         self.image_dir   = self.database_root + "img/" +sub_folder
@@ -96,6 +96,18 @@ class  Read_read_check_json_label(object):
                         #line_name =line_name[0] #just use the former one 
                         #pathy = rois[line_name]['y']
                         #pathx = rois[line_name]['x']
+
+                        # delete the coordinate out side the boundary of image
+                        len_ori,_ = coordinates.shape
+                        target =0
+                        for j in range(len_ori):
+
+                            if (coordinates[target,0] < 0 or coordinates[target,0]>(W-1) ) :# check the x coordinates
+                                coordinates= np.delete(coordinates , target,axis=0)
+                            else:
+                                target +=1
+
+
                         pathy  = coordinates[:,1]
                         pathx  = coordinates[:,0]
 
