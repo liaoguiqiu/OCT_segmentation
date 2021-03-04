@@ -188,6 +188,29 @@ class Basic_Operator2:
         #newy=new_contoury+r_vector
         #newx = np.arange(dx1, dx2)
         return newx,newy
+    def random_shape_contour3(H_ini,W_ini,H,W,sx,sy,x,y):
+        # simple version, just move up and down
+        dc1 =np.random.random_sample()*100
+        leny = len(y)
+        mask = y  < (H_ini -5)
+        r_vector   = np.random.sample(20)*20
+        r_vector=signal.resample(r_vector, leny)
+        r_vector = gaussian_filter1d (r_vector ,3)
+        shift = np.random.random_sample()*H -H/2
+        newy = y +  mask*(r_vector+ shift)
+         
+        newx = x
+        
+        for i in range(len( newy ) ):
+
+            newy[i]  = np.clip(newy[i] , sy[newx[i]]-1,H-1) # allow it to merge int o 1 pix
+
+
+            
+
+        #width  = 30% - % 50
+        newy = np.clip(newy,0,H-1)
+        return newx,newy
     # this one will not regard the original width of contour
     def random_shape_contour2(H_ini,W_ini,H,W,sx,sy,x,y):
         dc1 =np.random.random_sample()*100
@@ -332,7 +355,7 @@ class Basic_Operator2:
         for i in range(W_new):
             
 
-            if Dice % 3 ==0 : # less possibility to random select the A line s 
+            if Dice % 5 ==0 : # less possibility to random select the A line s 
                 line_it = int( np.random.random_sample()*points)
                 line_it = np.clip(line_it,0,points-1) 
                 
@@ -376,7 +399,7 @@ class Basic_Operator2:
         maxh = np.max(contourH)
         while(1):
             
-            if contourH[line_it]>=0.2* maxh:
+            if contourH[line_it]>=0.5* maxh:
                 source_line = img1[:,contour0x[line_it]]
                 newy   = int(new_contoury[i] )
                 iniy   =  int (contour0y[line_it]) - 3   # add 5 to give more high light bondaries 

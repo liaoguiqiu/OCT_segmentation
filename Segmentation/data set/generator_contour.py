@@ -202,15 +202,16 @@ class Generator_Contour(object):
                 #patch_r = generator.generate_background_image1(1,H_new,W_new -new_contourx[num_points-1])
                 #warp the contour 
                 Dice = int( np.random.random_sample()*10)
-                if Dice % 2 ==0 :
-                    patch = Basic_Operator .generate_patch_with_contour(img1,H_new,contour0x,contour0y,
-                                                     new_contourx,new_contoury)
-                else:
+                if Dice % 1 ==0 :
                     patch = Basic_Operator .generate_patch_base_origin(img1,H_new,contour0x,contour0y,
                                                      new_contourx,new_contoury)
+                else:
+                    patch = Basic_Operator .generate_patch_with_contour(img1,H_new,contour0x,contour0y,
+                                                     new_contourx,new_contoury)
+                    
                 #speckle 
-                patch= Basic_Operator.add_speckle_or_not(patch)
-                patch = Basic_Operator.add_gap_or_not(patch)
+                #patch= Basic_Operator.add_speckle_or_not(patch)
+                #patch = Basic_Operator.add_gap_or_not(patch)
 
                 new_image=np.append(patch_l,patch,axis=1) 
                 new_image=np.append(new_image,patch_r,axis=1) 

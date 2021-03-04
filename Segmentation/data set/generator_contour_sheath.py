@@ -236,7 +236,7 @@ class Generator_Contour_sheath(object):
                         cv2.imshow('shealth',New_img.astype(np.uint8))
 
                     #generate the signal 
-                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour2(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour3(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
                     New_img , mask  = Basic_Operator2. fill_patch_base_origin2(img1,H_new,contourx[1],contoury[1],
                                         new_contourx,new_contoury,New_img , mask )
                 
@@ -260,9 +260,9 @@ class Generator_Contour_sheath(object):
 
                         cv2.imshow('back',backimage.astype(np.uint8))
                     combin = Basic_Operator2.add_original_back(New_img,backimage,mask)
-                    combin= Basic_Operator.add_speckle_or_not(combin)
-                    combin= Basic_Operator.add_noise_or_not(combin)
-                    combin = Basic_Operator.add_gap_or_not(combin)
+                    #combin= Basic_Operator.add_speckle_or_not(combin)
+                    #combin= Basic_Operator.add_noise_or_not(combin)
+                    #combin = Basic_Operator.add_gap_or_not(combin)
 
                     RGB_imag = Basic_Operator.gray2rgb(combin) 
                     display = Basic_Operator.draw_coordinates_color(RGB_imag,new_contourx,new_contoury,2) # draw the tissue
