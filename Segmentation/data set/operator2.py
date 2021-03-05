@@ -161,7 +161,7 @@ class Basic_Operator2:
         np.roll(y, int(np.random.random_sample()*len(y)-1)) 
 
         dc1 = np.random.random_sample()*10
-        dc1  = int(dc1)%2
+        dc1  = int(dc1)%1
         if dc1==0: # not use the original signal 
             # inital ramdon width and height
            
@@ -171,7 +171,9 @@ class Basic_Operator2:
             r_vector   = np.random.sample(20)*10
             r_vector=signal.resample(r_vector, W)
             r_vector = gaussian_filter1d (r_vector ,10)
-            newy = newy + r_vector 
+
+            randomshift= np.random.random_sample()*100-50
+            newy = newy + r_vector  + randomshift
                     
             newy = np.clip(newy,50,H-1)
         else:       
@@ -192,11 +194,11 @@ class Basic_Operator2:
         # simple version, just move up and down
         dc1 =np.random.random_sample()*100
         leny = len(y)
-        mask = y  < (H_ini -5)
-        r_vector   = np.random.sample(20)*20
+        mask = y  < (H_ini -20)
+        r_vector   = np.random.sample(20)*50
         r_vector=signal.resample(r_vector, leny)
         r_vector = gaussian_filter1d (r_vector ,3)
-        shift = np.random.random_sample()*H -H/2
+        shift = np.random.random_sample()*H - H/1.2
         newy = y +  mask*(r_vector+ shift)
          
         newx = x
@@ -355,7 +357,7 @@ class Basic_Operator2:
         for i in range(W_new):
             
 
-            if Dice % 5 ==0 : # less possibility to random select the A line s 
+            if Dice % 10 ==0 : # less possibility to random select the A line s 
                 line_it = int( np.random.random_sample()*points)
                 line_it = np.clip(line_it,0,points-1) 
                 
@@ -399,7 +401,7 @@ class Basic_Operator2:
         maxh = np.max(contourH)
         while(1):
             
-            if contourH[line_it]>=0.5* maxh:
+            if contourH[line_it]>=0.8* maxh:
                 source_line = img1[:,contour0x[line_it]]
                 newy   = int(new_contoury[i] )
                 iniy   =  int (contour0y[line_it]) - 3   # add 5 to give more high light bondaries 
