@@ -6,6 +6,7 @@ import os
 import random
 from matplotlib.pyplot import *
 #from mpl_toolkits.mplot3d import Axes3D
+import seaborn as sns
 
 #PythonETpackage for xml file edition
 import pickle
@@ -172,7 +173,97 @@ class Generator_Contour_sheath(object):
                 cv2.imshow(title,display.astype(np.uint8) )
                 cv2.waitKey(10)   
         pass
-    
+    # to calculate the statitic distrubution of the dast 
+    def stastics (self):
+        #for num  in  self.origin_data.img_num:
+        img_id =1
+        distance_ori = []
+        distance_new = [] 
+ 
+            #number_i = 0          
+        for subfold in self.all_dir_list:
+ 
+        
+            #saved_stastics.all_statics_dir = os.path.join(self.signalroot, subfold, 'contour.pkl')
+            this_contour_dir =  self.pkl_dir+ subfold+'/'  # for both linux and window
+
+            self.origin_data =self.origin_data.read_data(this_contour_dir)  # this original data
+            #number_i +=1
+            file_len = len(self.origin_data.img_num)
+
+            for num in range(file_len):
+                name = self.origin_data.img_num[num]
+                img_path = self.image_dir+ subfold+'/' + name + ".jpg"
+                img_or = cv2.imread(img_path)
+                img1  =   cv2.cvtColor(img_or, cv2.COLOR_BGR2GRAY)
+                H,W = img1.shape
+                #just use the first contour 
+                #contour0x  = self.origin_data.contoursx[num][0]
+                #contour0y  = self.origin_data.contoursy[num][0]
+                contourx  = self.origin_data.contoursx[num]
+                contoury  = self.origin_data.contoursy[num]
+                
+
+                # draw this original contour 
+                display = Basic_Operator.draw_coordinates_color(img_or,contourx[0],contoury[0],1) # draw the sheath
+                display = Basic_Operator.draw_coordinates_color(img_or,contourx[1],contoury[1],2) # draw the tissue
+                distance_ori.append(contoury[1])
+
+                if self.cv_display ==True:
+                    cv2.imshow('origin',display.astype(np.uint8))
+            
+                #new_contourx=contour0x  +200
+                #new_contoury=contour0y-200
+
+                H_new = H
+                W_new = W
+                # genrate the new sheath contour
+                sheath_x,sheath_y = Basic_Operator2.random_sheath_contour(H_new,W_new,contourx[0],contoury[0])
+
+             
+                 
+
+                #generate the signal 
+                new_contourx,new_contoury = Basic_Operator2.random_shape_contour3(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+                # fill in the blank area 
+                min_b  = int(np.max(contoury[0]))
+                max_b  = int(np.min(contoury[1]))
+       
+                new_cx  = [None]*2
+                new_cy   = [None]*2
+                new_cx[0]  = sheath_x
+                new_cy[0]  = sheath_y
+                new_cx[1]  = new_contourx
+                new_cy[1]  = new_contoury
+
+                print(str(name))
+                self.append_new_name_contour(img_id,new_cx,new_cy,self.save_pkl_dir)
+                # save them altogether 
+            
+
+
+                # save them separetly 
+                #if not os.path.exists(directory):
+                # os.makedirs(directory)
+
+                img_id +=1
+
+                pass
+            time.sleep(0.1)
+
+            sns.set_style('darkgrid')
+            dis = np.concatenate(distance_ori).flat
+            
+            #array( distance_ori )
+            sns.distplot(dis)
+            distance_ori 
+            time.sleep(0.1)
+        #d =  np.random.sample(1000)*10
+        time.sleep(0.1)
+
+        sns.set_style('darkgrid')
+        sns.distplot(distance_ori)
+        time.sleep(0.1)
 
     
 
@@ -355,7 +446,7 @@ if __name__ == '__main__':
                     talker.save_data(com_dir)
             cv2.waitKey(1000)   
             print("waiting")
-
+    generator.stastics()
     generator.generate()
     
     generator.check()
