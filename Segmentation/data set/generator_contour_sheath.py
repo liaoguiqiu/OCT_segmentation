@@ -80,7 +80,9 @@ class Generator_Contour_sheath(object):
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
         self.image_dir ="D:/Deep learning/dataset/label data/img/"
         self.pkl_dir ="D:/Deep learning/dataset/label data/seg label pkl/"
-        self.save_image_dir ="D:/Deep learning/dataset/label data/img_generate/"
+        self.save_image_dir ="D:/Deep learning/dataset/label data/img_generate/" # this dir just save all together
+        self.save_image_dir_devi ="D:/Deep learning/dataset/label data/img_genetate_devi/" # this dir devide the generated images
+
         self.save_pkl_dir ="D:/Deep learning/dataset/label data/pkl_generate/"
         #self.origin_data =self.origin_data.read_data(self.pkl_dir)
         #self.origin_data = []
@@ -101,6 +103,12 @@ class Generator_Contour_sheath(object):
         self.folder_list = [None]*self.folder_num
         self.signal = [None]*self.folder_num
 
+        # create a detail foldeer list to save the generated images
+
+        for subfold in self.all_dir_list:
+            save_sub =  self. save_image_dir_devi + subfold+'/'
+            if not os.path.exists(save_sub):
+                os.makedirs(save_sub)
         # create all  the folder list and their data list
 
         #number_i = 0
@@ -169,7 +177,7 @@ class Generator_Contour_sheath(object):
     
 
 
-     
+  
 
         
 
@@ -195,10 +203,12 @@ class Generator_Contour_sheath(object):
             #number_i +=1
             file_len = len(self.origin_data.img_num)
 
-            repeat = int(50/file_len) # repeat to balance
+            repeat = int(100/file_len) # repeat to balance
             if repeat<1:
 
                 repeat = 1
+
+            img_id_devi = 1  # this image id is for one categrot/ subfolder 
 
             for n in range(repeat):  # repeat this to all data
 
@@ -280,10 +290,17 @@ class Generator_Contour_sheath(object):
 
                     print(str(name))
                     self.append_new_name_contour(img_id,new_cx,new_cy,self.save_pkl_dir)
-
+                    # save them altogether 
                     cv2.imwrite(self.save_image_dir  + str(img_id) +".jpg",combin )
-                    img_id +=1
+                    cv2.imwrite(self.save_image_dir_devi + subfold + '/' + str(img_id_devi) +".jpg",combin ) # save them separately
 
+
+                    # save them separetly 
+                    #if not os.path.exists(directory):
+                    # os.makedirs(directory)
+
+                    img_id +=1
+                    img_id_devi +=1 
             
 
 
