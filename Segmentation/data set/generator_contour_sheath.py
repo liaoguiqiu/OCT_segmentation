@@ -74,7 +74,7 @@ class Save_Contour_pkl(object):
 
 class Generator_Contour_sheath(object):
     def __init__(self ):
-        self.OLG_flag =True
+        self.OLG_flag =False
         self.cv_display = False
         self.origin_data = Save_Contour_pkl()
         #self.database_root = "../../OCT/beam_scanning/Data Set Reorganize/VARY/"
