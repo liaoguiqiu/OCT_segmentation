@@ -7,7 +7,7 @@ import random
 from matplotlib.pyplot import *
 #from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
-
+import matplotlib.pyplot as plt
 #PythonETpackage for xml file edition
 import pickle
 from operater import Basic_Operator
@@ -182,8 +182,7 @@ class Generator_Contour_sheath(object):
  
             #number_i = 0          
         for subfold in self.all_dir_list:
- 
-        
+         
             #saved_stastics.all_statics_dir = os.path.join(self.signalroot, subfold, 'contour.pkl')
             this_contour_dir =  self.pkl_dir+ subfold+'/'  # for both linux and window
 
@@ -202,17 +201,22 @@ class Generator_Contour_sheath(object):
                 #contour0y  = self.origin_data.contoursy[num][0]
                 contourx  = self.origin_data.contoursx[num]
                 contoury  = self.origin_data.contoursy[num]
-                
 
-                # draw this original contour 
-                display = Basic_Operator.draw_coordinates_color(img_or,contourx[0],contoury[0],1) # draw the sheath
-                display = Basic_Operator.draw_coordinates_color(img_or,contourx[1],contoury[1],2) # draw the tissue
-                distance_ori.append(contoury[1])
+
+                # fill in the background area with H value when contour is not fully labeld , 
+                contourx[0],contoury[0] = Basic_Operator2.re_fresh_path(contourx[0],contoury[0],H,W)
+                contourx[1],contoury[1] = Basic_Operator2.re_fresh_path(contourx[1],contoury[1],H,W)
+
+                # uniform the initial path 
+                distance_ori.append((contoury[1]-contoury[0])/H)
 
                 if self.cv_display ==True:
+                    # draw this original contour 
+                    display = Basic_Operator.draw_coordinates_color(img_or,contourx[0],contoury[0],1) # draw the sheath
+                    display = Basic_Operator.draw_coordinates_color(img_or,contourx[1],contoury[1],2) # draw the tissue
                     cv2.imshow('origin',display.astype(np.uint8))
             
-                #new_contourx=contour0x  +200
+                #new_contourx=contour0x +200
                 #new_contoury=contour0y-200
 
                 H_new = H
@@ -224,24 +228,35 @@ class Generator_Contour_sheath(object):
                  
 
                 #generate the signal 
-                new_contourx,new_contoury = Basic_Operator2.random_shape_contour3(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+                dc1 =np.random.random_sample()*100
+                dc1  = int(dc1)%2
+                if dc1!=0: 
+                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+                else:
+                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour2(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+
                 # fill in the blank area 
-                min_b  = int(np.max(contoury[0]))
-                max_b  = int(np.min(contoury[1]))
+
+                # aligh and cut the signal
+                #left= max(sheath_x[0],new_contourx[0])
+                #right=min(sheath_x[len(sheath_x)-1],  new_contourx[len(new_contourx)-1])
+                # fill in the background area with H value when contour is not fully labeld , 
+                sheath_x,sheath_y = Basic_Operator2.re_fresh_path(sheath_x,sheath_y,H_new,W_new)
+                new_contourx , new_contoury = Basic_Operator2.re_fresh_path(new_contourx,new_contoury,H_new ,W_new  )
+                distance_new .append((new_contoury -sheath_y)/H_new)
+                #min_b  = int(np.max(contoury[0]))
+                #max_b  = int(np.min(contoury[1]))
        
-                new_cx  = [None]*2
-                new_cy   = [None]*2
-                new_cx[0]  = sheath_x
-                new_cy[0]  = sheath_y
-                new_cx[1]  = new_contourx
-                new_cy[1]  = new_contoury
+                #new_cx  = [None]*2
+                #new_cy   = [None]*2
+                #new_cx[0]  = sheath_x
+                #new_cy[0]  = sheath_y
+                #new_cx[1]  = new_contourx
+                #new_cy[1]  = new_contoury
 
                 print(str(name))
-                self.append_new_name_contour(img_id,new_cx,new_cy,self.save_pkl_dir)
+                #self.append_new_name_contour(img_id,new_cx,new_cy,self.save_pkl_dir)
                 # save them altogether 
-            
-
-
                 # save them separetly 
                 #if not os.path.exists(directory):
                 # os.makedirs(directory)
@@ -249,21 +264,39 @@ class Generator_Contour_sheath(object):
                 img_id +=1
 
                 pass
-            time.sleep(0.1)
 
-            sns.set_style('darkgrid')
-            dis = np.concatenate(distance_ori).flat
-            
-            #array( distance_ori )
-            sns.distplot(dis)
-            distance_ori 
-            time.sleep(0.1)
+            #time.sleep(1)
+
+            #sns.set_style('darkgrid')
+            #dis = np.concatenate(distance_ori).flat
+            #plt.figure()
+
+            #sns.distplot(dis)
+            #time.sleep(0.1)
         #d =  np.random.sample(1000)*10
         time.sleep(0.1)
 
         sns.set_style('darkgrid')
-        sns.distplot(distance_ori)
+        dis = np.concatenate(distance_ori).flat
+        plt.figure()
+        sns.distplot(dis)
         time.sleep(0.1)
+
+        time.sleep(0.1)
+
+        sns.set_style('darkgrid')
+        plt.figure()
+
+        dis = np.concatenate(distance_new ).flat
+        clear_list =   [x for x in dis if (x>0 and x <= 0.75)]
+
+        sns.distplot(clear_list)
+
+        plt.figure()
+        sns.distplot(dis)
+        time.sleep(0.1)
+
+
 
     
 
