@@ -179,6 +179,8 @@ class Generator_Contour_sheath(object):
         img_id =1
         distance_ori = []
         distance_new = [] 
+        contact_r_ori =[] # the ratio of the contact 
+        contact_r_new =[] # the ratio of the contact 
  
             #number_i = 0          
         for subfold in self.all_dir_list:
@@ -209,6 +211,8 @@ class Generator_Contour_sheath(object):
 
                 # uniform the initial path 
                 distance_ori.append((contoury[1]-contoury[0])/H)
+                # 
+
 
                 if self.cv_display ==True:
                     # draw this original contour 
