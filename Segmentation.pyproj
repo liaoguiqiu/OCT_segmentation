@@ -24,6 +24,9 @@
     <Compile Include="A_line.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="basic_test\dependency_test.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="correct_sequence.py" />
     <Compile Include="Correct_sequence_iteration.py" />
     <Compile Include="cost_matrix.py" />
@@ -119,6 +122,7 @@
   <ItemGroup>
     <Folder Include="DeepPathsearch" />
     <Folder Include="data set\" />
+    <Folder Include="basic_test\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

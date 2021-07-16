@@ -181,7 +181,10 @@ class Generator_Contour_sheath(object):
         distance_new = [] 
         contact_r_ori =[] # the ratio of the contact 
         contact_r_new =[] # the ratio of the contact 
- 
+        # other metrics
+        # the tissue range or the length (with a ratio)
+        # the blank area ratio 
+
             #number_i = 0          
         for subfold in self.all_dir_list:
          
@@ -210,9 +213,12 @@ class Generator_Contour_sheath(object):
                 contourx[1],contoury[1] = Basic_Operator2.re_fresh_path(contourx[1],contoury[1],H,W)
 
                 # uniform the initial path 
-                distance_ori.append((contoury[1]-contoury[0])/H)
-                # 
+                this_distance = (contoury[1]-contoury[0])/H
+                distance_ori.append(this_distance)
 
+                # the original contact 
+                cont_points = sum(this_distance<0.006)
+                contact_r_ori .append(cont_points/W)
 
                 if self.cv_display ==True:
                     # draw this original contour 
@@ -228,16 +234,14 @@ class Generator_Contour_sheath(object):
                 # genrate the new sheath contour
                 sheath_x,sheath_y = Basic_Operator2.random_sheath_contour(H_new,W_new,contourx[0],contoury[0])
 
-             
-                 
 
                 #generate the signal 
                 dc1 =np.random.random_sample()*100
                 dc1  = int(dc1)%2
                 if dc1!=0: 
-                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour3(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
                 else:
-                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour2(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
+                    new_contourx,new_contoury = Basic_Operator2.random_shape_contour3(H,W,H_new,W_new,sheath_x,sheath_y,contourx[1],contoury[1])
 
                 # fill in the blank area 
 
@@ -247,7 +251,13 @@ class Generator_Contour_sheath(object):
                 # fill in the background area with H value when contour is not fully labeld , 
                 sheath_x,sheath_y = Basic_Operator2.re_fresh_path(sheath_x,sheath_y,H_new,W_new)
                 new_contourx , new_contoury = Basic_Operator2.re_fresh_path(new_contourx,new_contoury,H_new ,W_new  )
-                distance_new .append((new_contoury -sheath_y)/H_new)
+                new_distance = (new_contoury -sheath_y)/H_new
+                distance_new .append(new_distance)
+                # the contact raction new 
+                # the original contact 
+                cont_points_n = sum(new_distance<0.006)
+                contact_r_new .append(cont_points_n/W_new)
+
                 #min_b  = int(np.max(contoury[0]))
                 #max_b  = int(np.min(contoury[1]))
        
@@ -278,8 +288,9 @@ class Generator_Contour_sheath(object):
             #sns.distplot(dis)
             #time.sleep(0.1)
         #d =  np.random.sample(1000)*10
+        #---------------------------------
+        # draw the distibution of the distance 
         time.sleep(0.1)
-
         sns.set_style('darkgrid')
         dis = np.concatenate(distance_ori).flat
         plt.figure()
@@ -299,9 +310,25 @@ class Generator_Contour_sheath(object):
         plt.figure()
         sns.distplot(dis)
         time.sleep(0.1)
+        #-------------------
+        #draw somthing about the contact 
+        # draw the distibution of the distance 
+        time.sleep(0.1)
+        sns.set_style('darkgrid')
+        #dis = np.concatenate(contact_r_ori).flat # original contact map
+        dis =  contact_r_ori  # original contact map
 
+        plt.figure()
+        sns.distplot(dis)
+        time.sleep(0.1)
 
-
+        time.sleep(0.1)
+        sns.set_style('darkgrid')
+        #dis = np.concatenate(contact_r_new).flat # original contact map
+        dis =  contact_r_new 
+        plt.figure()
+        sns.distplot(dis)
+        time.sleep(0.1)
     
 
 
